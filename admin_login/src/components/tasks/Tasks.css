@@ -1,0 +1,71 @@
+.tasks-container {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.tasks-header {
+  margin-bottom: 1rem;
+}
+
+.calendar-task-layout {
+  display: flex;
+  gap: 2rem;
+}
+
+.calendar-wrapper {
+  min-width: 280px;
+}
+
+.task-table-container {
+  flex: 1;
+  overflow-x: auto;
+}
+
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+}
+
+.task-table th,
+.task-table td {
+  padding: 12px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.status-badge,
+.priority-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.status-badge.pending {
+  background-color: orange;
+}
+.status-badge.completed {
+  background-color: green;
+}
+.status-badge.overdue {
+  background-color: red;
+}
+
+.priority-badge.low {
+  background-color: green;
+}
+.priority-badge.medium {
+  background-color: orange;
+}
+.priority-badge.high {
+  background-color: red;
+}
+
+button {
+  margin-right: 5px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}

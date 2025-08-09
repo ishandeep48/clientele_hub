@@ -1,0 +1,341 @@
+/* ====================================
+   1. General Layout and Colors
+   ==================================== */
+:root {
+  --primary-blue: #3b82f6;
+  --dark-blue: #1e3a8a;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --bg-light: #f3f4f6;
+  --white: #ffffff;
+  --border-color: #e5e7eb;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-light);
+}
+
+/* ====================================
+   2. Sidebar Styling
+   ==================================== */
+.sidebar {
+  width: 260px;
+  background-color: var(--white);
+  padding: 20px 16px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease-in-out, padding 0.3s ease-in-out;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li a, .sidebar-footer a, .sidebar-footer button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 6px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar-nav li a:hover, .sidebar-footer a:hover, .sidebar-footer button:hover {
+  background-color: #e2e8f0;
+  color: var(--text-primary);
+}
+
+.sidebar-nav li a.active-link {
+  background-color: var(--primary-blue);
+  color: var(--white);
+}
+
+.sidebar-nav li a.active-link svg path {
+  stroke: var(--white);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ====================================
+   3. Main Content & Topbar
+   ==================================== */
+.dashboard-main-content {
+  flex-grow: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.welcome-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.welcome-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-top: 0;
+}
+
+.user-profile svg {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  padding: 4px;
+  box-sizing: content-box;
+}
+
+.dashboard-content-area {
+  flex-grow: 1;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dashboard-bottom-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ====================================
+   4. Reusable Card Styles
+   ==================================== */
+.stats-card, .recent-orders-card, .quick-actions-card {
+  background-color: var(--white);
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.card-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+
+.card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 8px 0;
+}
+
+.card-change {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.card-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* ====================================
+   5. Recent Orders Table
+   ==================================== */
+.recent-orders-card {
+  flex: 2;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th, .orders-table td {
+  padding: 10px 0;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.orders-table th {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.status-completed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-in-progress {
+  background-color: #e0f2fe;
+  color: #0c4a6e;
+}
+
+.status-pending {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.view-all-link {
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+/* ====================================
+   6. Quick Actions & Buttons
+   ==================================== */
+.quick-actions-card {
+  flex: 1;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button-primary, .button-secondary, .button-tertiary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s, border-color 0.2s;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.button-primary {
+  background-color: var(--primary-blue);
+  color: var(--white);
+}
+
+.button-primary:hover {
+  background-color: #2563eb;
+}
+
+.button-secondary {
+  background-color: var(--white);
+  color: var(--primary-blue);
+  border: 1px solid var(--border-color);
+}
+
+.button-secondary:hover {
+  border-color: var(--primary-blue);
+}
+
+.button-tertiary {
+  background-color: transparent;
+  color: var(--text-primary);
+}
+
+.button-tertiary:hover {
+  color: #000;
+}
+
+/* ====================================
+   7. Collapsible Sidebar
+   ==================================== */
+.sidebar-collapsed {
+  width: 60px;
+  padding: 16px 12px;
+}
+
+.sidebar-collapsed .logo-text {
+  display: none;
+}
+
+.sidebar-collapsed .sidebar-header {
+  justify-content: center;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.sidebar-collapsed .sidebar-nav li a,
+.sidebar-collapsed .sidebar-footer a,
+.sidebar-collapsed .sidebar-footer button {
+  justify-content: center;
+  padding: 10px 0;
+  margin-bottom: 4px;
+}
+
+.sidebar-collapsed .sidebar-nav li a span,
+.sidebar-collapsed .sidebar-footer a span,
+.sidebar-collapsed .sidebar-footer button span {
+  display: none;
+}
+
+.sidebar-collapsed .sidebar-nav li a svg,
+.sidebar-collapsed .sidebar-footer a svg,
+.sidebar-collapsed .sidebar-footer button svg {
+  margin-right: 0;
+}

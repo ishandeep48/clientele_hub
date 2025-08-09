@@ -1,0 +1,31 @@
+import {
+  MdDashboard,
+  MdPeople,
+  MdInventory,
+  MdAttachMoney,
+  MdShoppingCart,
+  MdAssignment,
+  MdTask,
+  MdPayment,
+  MdFeedback,
+  MdNotifications,
+  MdSettings,
+  MdFilterList,
+  MdLogout,
+} from 'react-icons/md';
+
+export const sidebarItems = [
+  { label: 'Dashboard', icon: <MdDashboard />, path: '/dashboard' },
+  { label: 'Leads', icon: <MdFilterList />, path: '/leads' },
+  { label: 'Customers', icon: <MdPeople />, path: '/customers' },
+  { label: 'Products', icon: <MdInventory />, path: '/products' },
+  { label: 'Orders', icon: <MdShoppingCart />, path: '/orders' },
+  { label: 'Payments', icon: <MdPayment />, path: '/payments' },
+  { label: 'Sales', icon: <MdAttachMoney />, path: '/sales' },
+  { label: 'Bills', icon: <MdAssignment />, path: '/bills' },
+  { label: 'Tasks', icon: <MdTask />, path: '/tasks' },
+  { label: 'Feedback', icon: <MdFeedback />, path: '/feedback' },
+  { label: 'Notifications', icon: <MdNotifications />, path: '/notifications'},
+  { label: 'Settings', icon: <MdSettings />, path: '/settings' },
+  { label: 'Logout', icon: <MdLogout />, path: '/logout' },
+];

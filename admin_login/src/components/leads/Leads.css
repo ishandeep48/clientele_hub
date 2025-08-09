@@ -1,0 +1,154 @@
+/* Container */
+.leads-container {
+  padding: 2rem;
+  background-color: #fefefe;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.leads-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Common Button Style */
+button {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Add Lead Button - Violet */
+.add-lead-btn {
+  background-color: #8a2be2;
+  color: white;
+}
+
+.add-lead-btn:hover {
+  background-color: #6d23b6;
+}
+
+/* Convert Button - Electric Yellow */
+.convert-btn {
+  background-color: #f5ea0a;
+  color: #1a1a1a;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.convert-btn:hover {
+  background-color: #e4d90c;
+}
+
+/* Import Button - Light Violet Border */
+.import-btn {
+  background-color: #f9f7ff;
+  border: 1px solid #8a2be2;
+  color: #8a2be2;
+}
+
+.import-btn:hover {
+  background-color: #f0eaff;
+}
+
+/* Table */
+.leads-table {
+  width: 100%;
+  margin-top: 1.5rem;
+  border-collapse: collapse;
+  background-color: white;
+  border: 1px solid #eee;
+}
+
+.leads-table th,
+.leads-table td {
+  padding: 0.75rem;
+  border: 1px solid #e6e6e6;
+  text-align: left;
+}
+
+.leads-table th {
+  background-color: #f5ea0a;
+  color: #1a1a1a;
+}
+
+/* Text Style */
+.email {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* Menu */
+.menu {
+  position: relative;
+  display: inline-block;
+}
+
+.dots-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #8a2be2;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 5px 0;
+  z-index: 1;
+}
+
+.menu:hover .dropdown {
+  display: block;
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lead-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.lead-modal input,
+.lead-modal select {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.45rem;
+  border: 1px solid #ccc;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Action Buttons Layout */
+.action-buttons {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}

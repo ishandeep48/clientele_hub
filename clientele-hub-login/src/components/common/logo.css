@@ -1,0 +1,29 @@
+/* ====================================
+   Logo Styling
+   ==================================== */
+
+.logo-container {
+  display: flex;
+  align-items: center; /* Vertically centers the SVG and text */
+  gap: 8px; /* Adds space between the SVG and the text */
+}
+
+.logo-container svg {
+  width: 32px; /* Set the size of the SVG icon */
+  height: 32px;
+}
+
+.logo-container .logo-text {
+  font-size: 1.25rem; /* Large font size for prominence */
+  font-weight: 700; /* Bold font weight */
+  color: #1e3a8a; /* A dark blue color for the text */
+  white-space: nowrap; /* Prevents the text from wrapping */
+}
+
+.logo-container svg path {
+  fill: none; /* Make sure the SVG paths have no fill by default */
+  stroke: #3b82f6; /* Set the stroke color of the SVG to match the theme */
+  stroke-width: 2; /* Adjust stroke width for desired thickness */
+  stroke-linecap: round; /* Round the ends of the lines */
+  stroke-linejoin: round; /* Round the joins between lines */
+}

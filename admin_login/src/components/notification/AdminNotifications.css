@@ -1,0 +1,75 @@
+.notifications-page {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  height: 100%;
+}
+
+.notifications-container {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.notifications-container h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.subtext {
+  color: #6b7280;
+  margin-top: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.notification-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1rem;
+  position: relative;
+}
+
+.icon {
+  font-size: 1.8rem;
+  margin-top: 0.2rem;
+}
+
+.details {
+  flex-grow: 1;
+}
+
+.details strong {
+  font-size: 1.05rem;
+  color: #111827;
+}
+
+.details p {
+  margin: 0.3rem 0;
+  color: #374151;
+}
+
+.timestamp {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.new-badge {
+  background-color: #4f46e5;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 9999px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 0.5rem;
+}

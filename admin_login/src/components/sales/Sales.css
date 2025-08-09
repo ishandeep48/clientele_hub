@@ -1,0 +1,49 @@
+.sales-container {
+  padding: 2rem;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.sales-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-btn,
+.export-btn {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sales-table {
+  width: 100%;
+  margin-top: 1.5rem;
+  border-collapse: collapse;
+}
+
+.sales-table th,
+.sales-table td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.action-btn {
+  margin-right: 8px;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #4b5563;
+  color: white;
+  border: none;
+}
+
+.delete-btn {
+  background-color: #dc2626;
+}
+

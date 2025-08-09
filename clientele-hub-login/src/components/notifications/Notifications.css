@@ -1,0 +1,74 @@
+.notifications-container {
+  padding: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.tabs button {
+  background: #f0f0f0;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.tabs button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.mark-read-btn {
+  background-color: #28a745;
+  color: white;
+  font-weight: 600;
+}
+
+.add-btn {
+  background-color: #ffc107;
+  color: black;
+  font-weight: 600;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notification-item {
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: background 0.3s;
+}
+
+.notification-item.unread {
+  background-color: #fffbe6;
+}
+
+.notification-item.read {
+  background-color: #f4f4f4;
+}
+
+.notification-item strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+
+.notification-item .date {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.5rem;
+}
