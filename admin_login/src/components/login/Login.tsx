@@ -13,21 +13,6 @@ const Login: React.FC = () => {
     setCredentials(prev => ({ ...prev, [name]: value }));
   };
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setError('');
-
-  //   const hardcodedEmail = 'admin@example.com';
-
-  //   if (credentials.email === hardcodedEmail && credentials.password.trim() !== '') {
-  //     // Simulate setting auth in localStorage
-  //     localStorage.setItem('isAdminLoggedIn', 'true');
-  //     alert('Login successful! Redirecting to dashboard...');
-  //     navigate('/dashboard');
-  //   } else {
-  //     setError('Invalid email or password. Try again.');
-  //   }
-  // };
   const handleSubmit = (e: React.FormEvent)=>{
     e.preventDefault();
     setError('');

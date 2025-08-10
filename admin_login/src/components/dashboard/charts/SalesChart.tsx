@@ -2,19 +2,39 @@
 import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const SalesChart = () => {
+const SalesChart = ({salesGraph}) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const sales = JSON.parse(localStorage.getItem('sales') || '[]');
-    const totals = sales.reduce((acc: any, curr: any) => {
-      const date = new Date(curr.date).toLocaleDateString();
-      acc[date] = (acc[date] || 0) + parseFloat(curr.amount || 0);
+    if (!Array.isArray(salesGraph)) {
+      console.warn("salesGraph is not an array:", salesGraph);
+      return;
+    }
+
+    const grouped = salesGraph.reduce((acc, sale) => {
+      if (!sale.date) return acc;
+
+      // Convert from dd/mm/yyyy to Date object
+      const [day, month, year] = sale.date.split('/');
+      const dateObj = new Date(`${year}-${month}-${day}`);
+      if (isNaN(dateObj.getTime())) return acc;
+
+      const dateStr = dateObj.toLocaleDateString('en-GB');
+      acc[dateStr] = (acc[dateStr] || 0) + parseFloat(sale.amount || 0);
       return acc;
     }, {});
-    const chartData = Object.keys(totals).map(date => ({ date, amount: totals[date] }));
-    setData(chartData);
-  }, []);
+
+    const formatted = Object.entries(grouped)
+      .map(([date, amount]) => ({ date, amount }))
+      .sort((a, b) => {
+        const [dayA, monthA, yearA] = a.date.split('/');
+        const [dayB, monthB, yearB] = b.date.split('/');
+        return new Date(`${yearA}-${monthA}-${dayA}`).getTime() -
+               new Date(`${yearB}-${monthB}-${dayB}`).getTime();
+      });
+
+    setData(formatted);
+  }, [salesGraph]);
 
   return (
     <ResponsiveContainer width="100%" height={350}>

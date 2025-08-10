@@ -4,15 +4,15 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 const COLORS = ['#16a34a', '#facc15', '#ef4444'];
 
-const FeedbackSentimentChart = () => {
+const FeedbackSentimentChart = ({feedbackGraph}) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const feedback = JSON.parse(localStorage.getItem('feedback') || '[]');
-    let good = 0, neutral = 0, bad = 0;
+    const feedback =feedbackGraph;
+    console.log(feedback)
+    let good = 0, neutral = 0, bad = 0; // chneged this shi
 
-    feedback.forEach((item: any) => {
-      const rating = parseInt(item.rating);
+    feedback.forEach((rating: any) => {
       if (rating >= 4) good++;
       else if (rating === 3) neutral++;
       else bad++;
@@ -23,7 +23,7 @@ const FeedbackSentimentChart = () => {
       { name: 'Neutral', value: neutral },
       { name: 'Negative', value: bad },
     ]);
-  }, []);
+  }, [feedbackGraph]);
 
   return (
     <ResponsiveContainer width="100%" height={350}>

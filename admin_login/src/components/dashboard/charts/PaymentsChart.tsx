@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 const COLORS = ['#22c55e', '#f97316', '#3b82f6', '#ef4444'];
 
-const PaymentsChart = () => {
+const PaymentsChart = ({paymentGraph}) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -13,9 +13,13 @@ const PaymentsChart = () => {
       acc[curr.method] = (acc[curr.method] || 0) + 1;
       return acc;
     }, {});
-    const chartData = Object.keys(methodCount).map((key) => ({ name: key, value: methodCount[key] }));
+    // console.log(Array.isArray(paymentGraph))
+    const chartData=paymentGraph
+// changed thios
+
+    // const chartData = Object.keys(methodCount).map((key) => ({ name: key, value: methodCount[key] }));
     setData(chartData);
-  }, []);
+  }, [paymentGraph]);
 
   return (
     <ResponsiveContainer width="100%" height={350}>

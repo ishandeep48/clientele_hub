@@ -4,18 +4,13 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 const COLORS = ['#0ea5e9', '#10b981'];
 
-const LeadsVsCustomersChart = () => {
+const LeadsVsCustomersChart = ({lvcGraph}) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const leads = JSON.parse(localStorage.getItem('leads') || '[]');
-    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
-    const chartData = [
-      { name: 'Leads', value: leads.length },
-      { name: 'Customers', value: customers.length },
-    ];
+    const chartData= lvcGraph;
     setData(chartData);
-  }, []);
+  }, [lvcGraph]);
 
   return (
     <ResponsiveContainer width="100%" height={350}>

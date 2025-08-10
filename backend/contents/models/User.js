@@ -1,6 +1,11 @@
 const mongoose =require('mongoose');
 
 const userSchema = new mongoose.Schema({
+    uid:{
+        type:String,
+        unique:true,
+        required:true
+    },
     name:{
         type: String,
         required: true
@@ -14,7 +19,18 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    role:"user"
+    role : {
+        type: String,
+        required: true,
+        enum:["user"],
+        default: "user"
+    },
+    userType:{
+        type:String,
+        required:true,
+        enum:["customer","lead"],
+        default:["lead"]
+    }
 });
 
-export default mongoose.model("User",userSchema);
+module.exports=mongoose.model("User",userSchema);

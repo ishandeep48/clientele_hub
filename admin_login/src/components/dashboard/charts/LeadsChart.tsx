@@ -1,4 +1,5 @@
 // LeadsChart.tsx
+// maybe this is never used
 import React from 'react';
 import {
   BarChart,
@@ -30,10 +31,17 @@ const LeadsChart: React.FC<LeadsChartProps> = ({ leads }) => {
     statusCounts[lead.status]++;
   });
 
-  const chartData = Object.keys(statusCounts).map((status) => ({
-    status,
-    count: statusCounts[status as keyof typeof statusCounts],
-  }));
+  // const chartData = Object.keys(statusCounts).map((status) => ({
+  //   status,
+  //   count: statusCounts[status as keyof typeof statusCounts],
+  // }));
+  
+  const chartData = [
+  { status: 'New', count: 5 },
+  { status: 'Connected', count: 3 },
+  { status: 'Qualified', count: 2 },
+  { status: 'Lost', count: 1 },
+]
 
   return (
     <div style={{ width: '100%', height: 300, marginBottom: '2rem' }}>

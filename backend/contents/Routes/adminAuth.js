@@ -6,9 +6,9 @@ const Admin =require('../models/Admin')
 const hashPassword=require('../functions/hashing')
 const{SECRET_KEY} = require('../functions/verifyToken')
 
-router.get('/Hi',(req,res)=>{
-    res.send('Hi');
-})
+// router.get('/Hi',(req,res)=>{
+//     res.send('Hi');
+// })
 //SIGNIN ROUTE FOR ADMIN(WILL BE REMOVED)
 router.post('/admin/signin',async(req,res)=>{
     if(!req.body){ console.log("empty btich");return;}

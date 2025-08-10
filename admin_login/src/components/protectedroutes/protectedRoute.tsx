@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
+// route to check if the person is logged in and authorised before opening the protected site
 export default function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
   if (!token) {

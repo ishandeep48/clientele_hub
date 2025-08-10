@@ -1,64 +1,80 @@
-import React, { useEffect, useState } from 'react';
-import './Dashboard.css';
-import OrdersChart from './charts/OrdersChart.tsx';
-import SalesChart from './charts/SalesChart.tsx';
-import PaymentsChart from './charts/PaymentsChart.tsx';
-import LeadsVsCustomersChart from './charts/LeadsVsCustomersChart.tsx';
-import FeedbackSentimentChart from './charts/FeedbackSentimentChart.tsx';
+import React, { useEffect, useState } from "react";
+import "./Dashboard.css";
+import OrdersChart from "./charts/OrdersChart.tsx";
+import SalesChart from "./charts/SalesChart.tsx";
+import PaymentsChart from "./charts/PaymentsChart.tsx";
+import LeadsVsCustomersChart from "./charts/LeadsVsCustomersChart.tsx";
+import FeedbackSentimentChart from "./charts/FeedbackSentimentChart.tsx";
+import axios from "axios";
 
 const Dashboard = () => {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [pendingOrders, setPendingOrders] = useState(0);
+  const [graphData, setGraphData] = useState({});
+  const [orderGraph,setOrderGraph]=useState([]);
+  const [salesGraph,setSalesGraph]=useState([]);
+  const [paymentGraph,setPaymentGraph] =useState([]);
+  const [feedbackGraph,setFeedbackGraph] =useState([]);
+  const [lvcGraph,setLVCGraph] = useState([]);
 
   useEffect(() => {
-    // Sales Module
-    const salesData = JSON.parse(localStorage.getItem('sales') || '[]');
-    setTotalSales(salesData.length);
+    const fetchData = async () => {
+      const result = await axios.get("http://localhost:5000/admin/orders/all");
+      if (result.data.message == "No orders found") {
+        console.log("NO ORDER HAI JI");
+      }
+      // Sales Module
+      setTotalSales(result.data.totalSales);
 
-    const revenue = salesData.reduce((sum: number, sale: any) => sum + Number(sale.total || 0), 0);
-    setTotalRevenue(revenue);
+      setTotalRevenue(result.data.totalRevenue);
 
-    // Customers Module
-    const customerData = JSON.parse(localStorage.getItem('customers') || '[]');
-    setTotalCustomers(customerData.length);
+      // Customers Module
+      setTotalCustomers(result.data.totalCustomers);
 
-    // Orders Module
-    const orderData = JSON.parse(localStorage.getItem('orders') || '[]');
-    const pending = orderData.filter((order: any) => order.status?.toLowerCase() === 'pending').length;
-    setPendingOrders(pending);
+      // Orders Module
+      setPendingOrders(result.data.pendingOrders);
+
+      setOrderGraph(result.data.orderOverview)
+      setSalesGraph(result.data.salesOverviewArray)
+      setPaymentGraph(result.data.paymentOverview)
+      setFeedbackGraph(result.data.feedbackSentiment)
+      setLVCGraph(result.data.leadVScustArray)
+      
+    };
+    fetchData();
   }, []);
 
   return (
     <div className="dashboard-container">
       <div className="header-section">
-      <h1>Dashboard</h1>
-      <button className="download-button">
-        <i className="download-icon" /> Download Report
-      </button>
+        <h1>Dashboard</h1>
+        <button className="download-button">
+          <i className="download-icon" /> Download Report
+        </button>
       </div>
 
       {/* Summary Cards */}
       <div className="summary-cards">
         <div className="card">
           <h4>Total Revenue</h4>
-          <h2>₹{totalRevenue.toLocaleString()}</h2>
+          <h2>₹{totalRevenue.toFixed(2)}</h2>
           <p>Based on all sales</p>
         </div>
         <div className="card">
           <h4>Total Customers</h4>
-          <h2>+{totalCustomers}</h2>
+          <h2>{totalCustomers}</h2>
           <p>All-time customer count</p>
         </div>
         <div className="card">
           <h4>Sales</h4>
-          <h2>+{totalSales}</h2>
+          <h2>{totalSales}</h2>
           <p>Total number of sales transactions</p>
         </div>
         <div className="card">
           <h4>Pending Orders</h4>
-          <h2>+{pendingOrders}</h2>
+          <h2>{pendingOrders}</h2>
           <p>Orders awaiting processing</p>
         </div>
       </div>
@@ -68,23 +84,23 @@ const Dashboard = () => {
       <div className="chart-grid">
         <div className="chart-card">
           <h3>Orders Overview</h3>
-          <OrdersChart />
+          <OrdersChart chartData={orderGraph} />
         </div>
         <div className="chart-card">
           <h3>Sales Overview</h3>
-          <SalesChart />
+          <SalesChart salesGraph={salesGraph}/>
         </div>
         <div className="chart-card">
           <h3>Payments Overview</h3>
-          <PaymentsChart />
+          <PaymentsChart paymentGraph={paymentGraph} />
         </div>
         <div className="chart-card">
           <h3>Leads vs Customers</h3>
-          <LeadsVsCustomersChart />
+          <LeadsVsCustomersChart lvcGraph={lvcGraph} />
         </div>
         <div className="chart-card">
           <h3>Feedback Sentiment</h3>
-          <FeedbackSentimentChart />
+          <FeedbackSentimentChart feedbackGraph={feedbackGraph} />
         </div>
       </div>
     </div>
