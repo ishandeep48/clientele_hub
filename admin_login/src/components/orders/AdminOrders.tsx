@@ -1,29 +1,52 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./AdminOrders.css";
 import OrderDetailsModal from "./OrderDetailsModal.tsx";
 import AcknowledgeOrderModal from "./AcknowledgeOrderModal.tsx";
 
 interface Order {
-  id: string;
-  customerName: string;
-  productName: string;
-  itemCount: number;
+  orderId: string;
+  customer: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+  product: string;
+  status: 'Pending' | 'Completed' | 'Cancelled' | 'Shipped';
   total: number;
-  status: 'Pending' | 'Acknowledged' | 'Cancelled';
-  orderDate: string;
+  items: number;
+  date: string;
 }
 
-const AdminOrders: React.FC = () => {
+const AdminOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isAcknowledgeOpen, setIsAcknowledgeOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem("clientOrders");
-    const parsed = stored ? JSON.parse(stored) : [];
-    setOrders(parsed);
+    fetchOrders();
   }, []);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('http://localhost:5000/admin/orders/getall');
+      // Ensure orders is always an array
+      console.log(response.data);
+      const ordersData = Array.isArray(response.data) ? response.data : [];
+      setOrders(ordersData);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      setError('Failed to fetch orders');
+      setOrders([]); // Set empty array on error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleView = (order: Order) => {
     setSelectedOrder(order);
@@ -35,29 +58,38 @@ const AdminOrders: React.FC = () => {
     setIsAcknowledgeOpen(true);
   };
 
-const handleAcknowledgeConfirm = (orderId: string, response: string) => {
-  const updated = orders.map((o) =>
-    o.id === orderId
-      ? { ...o, status: "Acknowledged", adminResponse: response }
-      : o
-  );
-
-  setOrders(updated);
-  localStorage.setItem("clientOrders", JSON.stringify(updated));
-
-  const confirmed = JSON.parse(localStorage.getItem("confirmedOrders") || "[]");
-  const acknowledgedOrder = updated.find(o => o.id === orderId);
-  if (acknowledgedOrder) {
-    localStorage.setItem(
-      "confirmedOrders",
-      JSON.stringify([...confirmed, acknowledgedOrder])
-    );
+const handleAcknowledgeConfirm = async (orderId: string, response: string) => {
+  try {
+    await axios.put(`http://localhost:5000/admin/orders/${orderId}/acknowledge`, {
+      adminResponse: response
+    });
+    fetchOrders(); // Refresh the list
+  } catch (error) {
+    console.error('Error acknowledging order:', error);
   }
 };
 
+  const seedOrders = async () => {
+    try {
+      await axios.post('http://localhost:5000/admin/orders/seed');
+      fetchOrders(); // Refresh the list
+    } catch (error) {
+      console.error('Error seeding orders:', error);
+    }
+  };
+
   return (
     <div className="admin-orders-container">
-      <h2>Client Order Requests</h2>
+      <div className="admin-orders-header">
+        <h2>Client Order Requests</h2>
+        <button className="seed-btn" onClick={seedOrders}>
+          Seed Sample Data
+        </button>
+      </div>
+
+      {loading && <div className="loading">Loading orders...</div>}
+      {error && <div className="error">{error}</div>}
+
       <table className="admin-orders-table">
         <thead>
           <tr>
@@ -72,32 +104,32 @@ const handleAcknowledgeConfirm = (orderId: string, response: string) => {
           </tr>
         </thead>
         <tbody>
-          {orders.length === 0 ? (
+          {!Array.isArray(orders) || orders.length === 0 ? (
             <tr>
               <td colSpan={8}>No orders yet</td>
             </tr>
           ) : (
-            orders.map((order) => (
-              <tr key={order.id}>
-                <td>{order.id}</td>
-                <td>{order.customerName}</td>
-                <td>{order.productName}</td>
-                <td>
-                  <span className={`status-badge ${order.status.toLowerCase()}`}>
-                    {order.status}
-                  </span>
-                </td>
-                <td>₹{order.total}</td>
-                <td>{order.itemCount}</td>
-                <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                <td>
-                  <button onClick={() => handleView(order)}>View</button>
-                  {order.status === "Pending" && (
-                    <button onClick={() => handleAcknowledge(order)}>Acknowledge</button>
-                  )}
-                </td>
-              </tr>
-            ))
+                         orders.map((order) => (
+               <tr key={order.orderId}>
+                 <td>{order.orderId}</td>
+                 <td>{order.customer.name}</td>
+                 <td>{order.product}</td>
+                 <td>
+                   <span className={`status-badge ${order.status.toLowerCase()}`}>
+                     {order.status}
+                   </span>
+                 </td>
+                 <td>₹{order.total}</td>
+                 <td>{order.items}</td>
+                 <td>{new Date(order.date).toLocaleDateString()}</td>
+                 <td>
+                   <button onClick={() => handleView(order)}>View</button>
+                   {order.status === "Pending" && (
+                     <button onClick={() => handleAcknowledge(order)}>Complete</button>
+                   )}
+                 </td>
+               </tr>
+             ))
           )}
         </tbody>
       </table>

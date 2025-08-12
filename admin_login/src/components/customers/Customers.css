@@ -92,3 +92,43 @@
   font-size: 1.25rem;
   cursor: pointer;
 }
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.error {
+  text-align: center;
+  padding: 1rem;
+  margin: 1rem 0;
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+}
+
+.customers-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.export-btn {
+  background-color: #10b981;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.export-btn:hover {
+  background-color: #059669;
+}
+
+.add-customer-btn:hover {
+  background-color: #2563eb;
+}

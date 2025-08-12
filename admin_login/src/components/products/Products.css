@@ -94,3 +94,43 @@
   display: flex;
   justify-content: space-between;
 }
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.error {
+  text-align: center;
+  padding: 1rem;
+  margin: 1rem 0;
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+}
+
+.products-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.seed-btn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.seed-btn:hover {
+  background-color: #059669;
+}
+
+.add-product-btn:hover {
+  background-color: #2563eb;
+}

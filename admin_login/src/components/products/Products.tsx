@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Products.css';
 import AddProductModal from './AddProductModal.tsx';
 
@@ -18,26 +19,40 @@ const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) setProducts(JSON.parse(saved));
+    fetchProducts();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
-
-  const handleSave = (product: Product) => {
-    if (editProduct) {
-      setProducts(prev =>
-        prev.map(p => (p.id === product.id ? product : p))
+  const fetchProducts = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('http://localhost:5000/admin/products/all');
+      // Sort products alphabetically by name
+      const sortedProducts = response.data.sort((a: Product, b: Product) => 
+        a.name.localeCompare(b.name)
       );
-    } else {
-      setProducts(prev => [...prev, product]);
+      setProducts(sortedProducts);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setError('Failed to fetch products');
+    } finally {
+      setLoading(false);
     }
-    setIsModalOpen(false);
-    setEditProduct(null);
+  };
+
+  const handleSave = async (product: Product) => {
+    try {
+      await axios.post('http://localhost:5000/admin/products/new', { product });
+      fetchProducts(); // Refresh the list
+      setIsModalOpen(false);
+      setEditProduct(null);
+    } catch (error) {
+      console.error('Error saving product:', error);
+    }
   };
 
   const handleEdit = (product: Product) => {
@@ -45,9 +60,23 @@ const Products = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Delete this product?')) {
-      setProducts(prev => prev.filter(p => p.id !== id));
+      try {
+        await axios.delete(`http://localhost:5000/admin/products/delete/${id}`);
+        fetchProducts(); // Refresh the list
+      } catch (error) {
+        console.error('Error deleting product:', error);
+      }
+    }
+  };
+
+  const seedProducts = async () => {
+    try {
+      await axios.post('http://localhost:5000/admin/products/seed');
+      fetchProducts(); // Refresh the list
+    } catch (error) {
+      console.error('Error seeding products:', error);
     }
   };
 
@@ -58,10 +87,18 @@ const Products = () => {
           <h2>Products</h2>
           <p>Manage your inventory and catalog.</p>
         </div>
-        <button className="add-product-btn" onClick={() => setIsModalOpen(true)}>
-          Add New Product
-        </button>
+        <div className="products-actions">
+          <button className="seed-btn" onClick={seedProducts}>
+            Seed Sample Data
+          </button>
+          <button className="add-product-btn" onClick={() => setIsModalOpen(true)}>
+            Add New Product
+          </button>
+        </div>
       </div>
+
+      {loading && <div className="loading">Loading products...</div>}
+      {error && <div className="error">{error}</div>}
 
       <table className="products-table">
         <thead>

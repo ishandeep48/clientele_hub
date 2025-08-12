@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Customers.css';
 import CustomerModal from './CustomerModal.tsx';
 
@@ -16,29 +17,53 @@ const Customers = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedCustomers = localStorage.getItem('customers');
-    if (storedCustomers) setCustomers(JSON.parse(storedCustomers));
+    fetchCustomers();
   }, []);
 
-  const handleAddCustomer = (customer: Customer) => {
-    let updated: Customer[];
-    if (editingCustomer) {
-      updated = customers.map((c) => (c.id === customer.id ? customer : c));
-      setEditingCustomer(null);
-    } else {
-      updated = [...customers, customer];
+  const fetchCustomers = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('http://localhost:5000/admin/customers/all');
+      // Sort customers alphabetically by name
+      const sortedCustomers = response.data.sort((a: Customer, b: Customer) => 
+        a.name.localeCompare(b.name)
+      );
+      setCustomers(sortedCustomers);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      setError('Failed to fetch customers');
+    } finally {
+      setLoading(false);
     }
-    setCustomers(updated);
-    localStorage.setItem('customers', JSON.stringify(updated));
   };
 
-  const handleDelete = (id: string) => {
-    const updated = customers.filter((c) => c.id !== id);
-    setCustomers(updated);
-    localStorage.setItem('customers', JSON.stringify(updated));
-    setMenuOpen(null);
+  const handleAddCustomer = async (customer: Customer) => {
+    try {
+      if (editingCustomer) {
+        await axios.post('http://localhost:5000/admin/customers/new', { customer });
+        setEditingCustomer(null);
+      } else {
+        await axios.post('http://localhost:5000/admin/customers/new', { customer });
+      }
+      fetchCustomers(); // Refresh the list
+    } catch (error) {
+      console.error('Error saving customer:', error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`http://localhost:5000/admin/customers/delete/${id}`);
+      fetchCustomers(); // Refresh the list
+      setMenuOpen(null);
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+    }
   };
 
   const handleEdit = (customer: Customer) => {
@@ -82,6 +107,9 @@ const Customers = () => {
           </button>
         </div>
       </div>
+
+      {loading && <div className="loading">Loading customers...</div>}
+      {error && <div className="error">{error}</div>}
 
       <table className="customers-table">
         <thead>

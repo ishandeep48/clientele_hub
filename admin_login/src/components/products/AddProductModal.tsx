@@ -45,7 +45,7 @@ const AddProductModal = ({ onClose, onSave, initialData }: Props) => {
 
   const handleSubmit = () => {
     const product: Product = {
-      id: form.id || Date.now().toString(),
+      id: form.id || '',
       name: form.name,
       category: form.category,
       image: form.image,
@@ -53,6 +53,7 @@ const AddProductModal = ({ onClose, onSave, initialData }: Props) => {
       stock: parseInt(form.stock),
       gst: parseFloat(form.gst),
       status: form.status as 'Active' | 'Inactive',
+      createdAt: form.id ? (initialData?.createdAt || new Date().toLocaleDateString()) : new Date().toLocaleDateString(),
     };
     onSave(product);
   };

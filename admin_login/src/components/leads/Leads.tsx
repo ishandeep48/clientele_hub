@@ -143,7 +143,6 @@ const Leads = () => {
       });
       if (res.data.success) {
         alert(`${selectedUids.length} lead(s) converted to customers.`);
-        // Optionally, refresh leads from server:
         const response = await axios.get("http://localhost:5000/admin/leads/all");
         setLeads(response.data);
         setSelectedLeads(new Set());

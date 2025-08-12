@@ -1,10 +1,19 @@
 import React, { useState , useEffect } from 'react';
 import './Customers.css';
 
+interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  joinedAt: string;
+}
+
 interface Props {
   onClose: () => void;
-  onAdd: (customer: any) => void;
-  editData?: any;
+  onAdd: (customer: Customer) => void;
+  editData?: Customer | null;
 }
 
 const CustomerModal: React.FC<Props> = ({ onClose, onAdd, editData }) => {
@@ -20,11 +29,11 @@ const CustomerModal: React.FC<Props> = ({ onClose, onAdd, editData }) => {
   }, [editData]);
 
   const handleSubmit = () => {
-    if (!formData.name || !formData.email) return;
+    if (!formData.name || !formData.email || !formData.phone) return;
 
-    const newCustomer = {
+    const newCustomer: Customer = {
       ...formData,
-      id: editData ? editData.id : Date.now().toString(),
+      id: editData ? editData.id : '',
       joinedAt: editData ? editData.joinedAt : new Date().toLocaleDateString(),
     };
     onAdd(newCustomer);
