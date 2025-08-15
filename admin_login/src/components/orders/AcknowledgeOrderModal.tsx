@@ -7,14 +7,16 @@ const AcknowledgeOrderModal = ({ order, isOpen, onClose, onAcknowledge }) => {
   if (!isOpen || !order) return null;
 
   const handleSubmit = () => {
-    onAcknowledge(order.id, response);
+    console.log(order)
+    console.log(order.orderId)
+    onAcknowledge(order.orderId, response);
     onClose();
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h3>Acknowledge Order - {order.id}</h3>
+        <h3>Acknowledge Order - {order.orderId}</h3>
         <textarea
           placeholder="Write your response..."
           value={response}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Sales.css";
 import AddSalesModal from "./AddSalesModal.tsx";
 import ViewSalesModal from "./ViewSalesModal.tsx";
+import axios from "axios";
 
 const Sales: React.FC = () => {
   const [sales, setSales] = useState<any[]>([]);
@@ -10,14 +11,20 @@ const Sales: React.FC = () => {
   const [currentSale, setCurrentSale] = useState<any>(null);
 
   useEffect(() => {
-    const storedSales = JSON.parse(localStorage.getItem("sales") || "[]");
-    setSales(storedSales);
+    // const storedSales = JSON.parse(localStorage.getItem("sales") || "[]");
+    // //
+    // setSales(storedSales);
+    const getData = async()=>{
+      const res=await axios.get('http://localhost:5000/admin/sales/all');
+      const stored = res.data;
+      setSales(stored);
+    }
+    getData()
   }, []);
 
   const handleAddSale = (sale: any) => {
     const updatedSales = [...sales, sale];
     setSales(updatedSales);
-    localStorage.setItem("sales", JSON.stringify(updatedSales));
   };
 
   const handleEditSale = (updatedSale: any) => {
@@ -28,19 +35,23 @@ const Sales: React.FC = () => {
     localStorage.setItem("sales", JSON.stringify(updatedSales));
   };
 
-  const handleDeleteSale = (id: string) => {
-    const updatedSales = sales.filter((s) => s.id !== id);
-    setSales(updatedSales);
-    localStorage.setItem("sales", JSON.stringify(updatedSales));
+  const handleDeleteSale = async(id: string) => {
+    console.log(id)
+    const res = await axios.delete('http://localhost:5000/admin/sales/delete',{data:{id}});
+    console.log(res);
+    if(res.data.message=="done")
+    {const updatedSales = sales.filter((s) => s.salesid !== id);
+    setSales(updatedSales);}
+
   };
 
   const exportToCSV = () => {
     const headers = ["Product", "Amount", "Date", "Salesperson"];
     const rows = sales.map((sale) => [
-      sale.product,
+      sale.prodId.pid,
       sale.amount,
       sale.date,
-      sale.salesperson,
+      sale.salesPerson.name,
     ]);
     const csvContent =
       "data:text/csv;charset=utf-8," +
@@ -79,11 +90,11 @@ const Sales: React.FC = () => {
         </thead>
         <tbody>
           {sales.map((sale) => (
-            <tr key={sale.id}>
-              <td>{sale.product}</td>
-              <td>{sale.amount}</td>
-              <td>{sale.date}</td>
-              <td>{sale.salesperson}</td>
+            <tr key={sale.salesid}>
+              <td>{sale.prodId.pid}</td>
+              <td>INR {sale.amount}</td>
+              <td>{new Date(sale.date).toLocaleDateString()}</td>
+              <td>{sale.salesPerson.name}</td>
               <td>
                 <button
                   className="action-btn"
@@ -105,7 +116,7 @@ const Sales: React.FC = () => {
                 </button>
                 <button
                   className="action-btn delete-btn"
-                  onClick={() => handleDeleteSale(sale.id)}
+                  onClick={() => handleDeleteSale(sale.salesid)}
                 >
                   Delete
                 </button>

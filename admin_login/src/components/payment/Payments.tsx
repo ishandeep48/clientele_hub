@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import "./Payments.css";
 import PaymentModals from './PaymentModals.tsx';
+import axios from 'axios'
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);
@@ -9,8 +10,16 @@ const Payments = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('payments') || '[]');
-    setPayments(stored);
+    // const stored = JSON.parse(localStorage.getItem('payments') || '[]');
+    // setPayments(stored);
+    // console.log(stored);
+    const getdata = async()=>{
+      const res = await axios.get('http://localhost:5000/admin/payments/all');
+      const stored = res.data;
+      console.log(stored)
+      setPayments(stored);
+    }
+    getdata();
   }, []);
 
   const handleView = (payment: any) => {
@@ -21,7 +30,7 @@ const Payments = () => {
   const handleExportCSV = () => {
     const headers = ['Payment ID', 'Order ID', 'Customer', 'Method', 'Amount', 'Date'];
     const rows = payments.map((p) =>
-      [p.id, p.orderId, p.customer, p.method, p.amount, p.date]
+      [p.Paymentid, p._id, p.orderedBy||"koi set rn", p.method, p.price, p.date]
     );
 
     const csv = [headers, ...rows].map((r) => r.join(',')).join('\n');
@@ -37,11 +46,11 @@ const Payments = () => {
     const content = `
 Payment Receipt
 ----------------------
-Payment ID: ${payment.id}
-Order ID: ${payment.orderId}
-Customer: ${payment.customer}
+Payment ID: ${payment.Paymentid}
+Order ID: ${payment._id}
+Customer: ${payment.orderedBy || "null hai"}
 Method: ${payment.method}
-Amount: ₹${payment.amount}
+Amount: ₹${payment.price}
 Date: ${payment.date}
     `;
     const blob = new Blob([content], { type: 'text/plain' });
@@ -72,11 +81,11 @@ Date: ${payment.date}
         <tbody>
           {payments.map((payment: any) => (
             <tr key={payment.id}>
-              <td>{payment.id}</td>
-              <td>{payment.orderId}</td>
-              <td>{payment.customer}</td>
+              <td>{payment.Paymentid}</td>
+              <td>{payment._id}</td>
+              <td>{payment.orderedBy || "null customer"}</td>
               <td>{payment.method}</td>
-              <td>₹{payment.amount}</td>
+              <td>₹{payment.price}</td>
               <td>{payment.date}</td>
               <td>
                 <button onClick={() => handleView(payment)}>View</button>

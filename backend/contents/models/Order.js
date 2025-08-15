@@ -2,20 +2,20 @@ const mongoose = require("mongoose");
 const { nanoid } = require("nanoid");
 const User = require("./User");
 
-const id = nanoid(10);
+// const id = nanoid(10);
 const orderSchema = new mongoose.Schema({
   date: {
     required: true,
     type: Date,
     default: Date.now(),
   },
-  id: {
+  Paymentid: {
     required: true,
     type: String,
-    default: id,
+    default: ()=>nanoid(10),
   },
   orderedBy: {
-    required: true,
+    // required: true,
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },

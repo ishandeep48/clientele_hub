@@ -72,8 +72,9 @@ router.put("/admin/orders/:id/acknowledge", async (req, res) => {
   try {
     const { id } = req.params;
     const { adminResponse } = req.body;
-    
+    console.log(id)
     const order = await Order.findById(id);
+    console.log(order)
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }

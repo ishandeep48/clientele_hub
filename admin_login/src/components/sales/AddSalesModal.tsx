@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./AddSalesModal.css";
+import axios from "axios";
 
 interface Props {
   sale: any;
@@ -8,25 +9,47 @@ interface Props {
 }
 
 const AddSalesModal: React.FC<Props> = ({ sale, onClose, onSave }) => {
+
   const [form, setForm] = useState({
-    id: "",
-    product: "",
-    amount: "",
-    date: "",
-    salesperson: "",
+    id: sale?.salesid || "",
+    product: sale?.prodId.pid || "",
+    amount: sale?.amount || "",
+    date: sale?.date || "",
+    salesperson: sale?.salesPerson.name || "",
   });
 
   useEffect(() => {
     if (sale) setForm(sale);
-    else setForm({ id: crypto.randomUUID(), product: "", amount: "", date: "", salesperson: "" });
+    else setForm({ id: "", product: "", amount: "", date: "", salesperson: "" });
   }, [sale]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value)
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('test', e.target.value)
+    setForm({ ...form, [e.target.name]: new Date(e.target.value) });
+  };
 
-  const handleSubmit = () => {
-    onSave(form);
+
+  const handleSubmit = async () => {
+    console.log(form);
+    if (!sale) {
+      const res = await axios.post('http://localhost:5000/admin/sales/new', form);
+      console.log(res.data.message)
+      if (res.data.message == 'done') {
+        window.location.reload();
+      }
+    } else {
+      console.log(form)
+      const res = await axios.post('http://localhost:5000/admin/sales/edit', form);
+      console.log(res.data.message)
+      if (res.data.message == 'done') {
+        window.location.reload();
+      }
+    }
+
   };
 
   return (
@@ -35,7 +58,8 @@ const AddSalesModal: React.FC<Props> = ({ sale, onClose, onSave }) => {
         <h3>{sale ? "Edit Sale" : "Add Sale"}</h3>
         <div className="form-group">
           <label>Product</label>
-          <input name="product" value={form.product} onChange={handleChange} />
+          {/* {console.log("hehe",form.date)} */}
+          <input name="product" value={form.product} placeholder="Enter the Product ID" onChange={handleChange} />
         </div>
         <div className="form-group">
           <label>Amount</label>
@@ -43,7 +67,7 @@ const AddSalesModal: React.FC<Props> = ({ sale, onClose, onSave }) => {
         </div>
         <div className="form-group">
           <label>Date</label>
-          <input name="date" type="date" value={form.date} onChange={handleChange} />
+          <input name="date" type="date" value={form.date ? new Date(form.date).toISOString().split("T")[0] : ""} onChange={handleDateChange} />
         </div>
         <div className="form-group">
           <label>Salesperson</label>
