@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import axios from "axios";
 import "./Bills.css";
 
 interface Bill {
@@ -16,10 +17,26 @@ interface Bill {
 
 const Bills: React.FC = () => {
   const [bills, setBills] = useState<Bill[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedBills = JSON.parse(localStorage.getItem("bills") || "[]");
-    setBills(storedBills);
+    const fetchBills = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await axios.get("http://localhost:5000/admin/bills/all");
+        const data = Array.isArray(res.data) ? res.data : [];
+        setBills(data);
+      } catch (e) {
+        console.error("Failed to fetch bills", e);
+        setError("Failed to fetch bills");
+        setBills([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBills();
   }, []);
 
   const handleDownloadPDF = async (bill: Bill) => {
@@ -62,6 +79,13 @@ const Bills: React.FC = () => {
         <strong>Bills</strong>{" "}
         <span className="bills-subtext">Manage and track customer invoices.</span>
       </h1>
+
+      {loading && (
+        <div style={{ padding: "1rem", color: "#6b7280" }}>Loading bills...</div>
+      )}
+      {error && (
+        <div style={{ padding: "1rem", color: "#dc2626" }}>{error}</div>
+      )}
 
       <div className="bills-table-wrapper">
         <table className="bills-table">

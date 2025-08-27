@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './AdminSettings.css';
 
 const AdminSettings: React.FC = () => {
@@ -21,10 +22,23 @@ const AdminSettings: React.FC = () => {
 
   useEffect(() => {
     const storedAdmin = JSON.parse(localStorage.getItem('admin_user') || '{}');
+    const emailFromStorage = storedAdmin.email || 'admin@example.com';
     setName(storedAdmin.name || 'Admin User');
-    setEmail(storedAdmin.email || 'admin@example.com');
+    setEmail(emailFromStorage);
     setProfilePic(storedAdmin.profilePic || '');
-    setDarkMode(localStorage.getItem('admin_dark_mode') === 'true');
+    // fetch preferences
+    (async ()=>{
+      try{
+        const res = await axios.get(`http://localhost:5000/admin/prefs/${encodeURIComponent(emailFromStorage)}`);
+        const prefersDark = !!res.data?.darkMode;
+        setDarkMode(prefersDark);
+        document.documentElement.classList.toggle('dark', prefersDark);
+      }catch(e){
+        const prefersDark = localStorage.getItem('admin_dark_mode') === 'true';
+        setDarkMode(prefersDark);
+        document.documentElement.classList.toggle('dark', prefersDark);
+      }
+    })();
   }, []);
 
   const handleProfilePicUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,11 +117,16 @@ const AdminSettings: React.FC = () => {
     alert(`Notifications ${!notificationsEnabled ? 'enabled' : 'disabled'}.`);
   };
 
-  const handleDarkModeToggle = () => {
+  const handleDarkModeToggle = async () => {
     const newMode = !darkMode;
     setDarkMode(newMode);
-    localStorage.setItem('admin_dark_mode', String(newMode));
-    alert(`Dark Mode ${newMode ? 'Enabled' : 'Disabled'}`);
+    document.documentElement.classList.toggle('dark', newMode);
+    try{
+      await axios.post('http://localhost:5000/admin/prefs', { email, darkMode: newMode });
+    }catch(e){
+      // fallback local persistence
+      localStorage.setItem('admin_dark_mode', String(newMode));
+    }
   };
 
   const handleDeleteAccount = () => {
