@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 function middleware(app){
     app.use(express.json());
-    app.use(cors({origin:"http://localhost:3000"})); 
+    app.use(cors({origin:"*"})); 
 
     mongoose.connect('mongodb://127.0.0.1:27017/clienthub')
     .then(()=>console.log("Connected to database"))

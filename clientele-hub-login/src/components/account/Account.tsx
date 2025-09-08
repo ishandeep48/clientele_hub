@@ -1,25 +1,43 @@
 import React, { useRef, useState, useEffect } from 'react';
 import './Account.css';
 
-const Account: React.FC = () => {
-  const [firstName, setFirstName] = useState('John');
-  const [lastName, setLastName] = useState('Doe');
-  const [company, setCompany] = useState('Acme Inc.');
+const Account = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
+  const [phone, setPhone] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState(null as string | null);
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef(null as HTMLInputElement | null);
+
+  const loadProfile = async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:5000/user/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) return;
+      setName(data.name || '');
+      setEmail(data.email || '');
+      setCompany(data.company || '');
+      setPhone(data.phone || '');
+    } catch (e) {}
+  };
 
   useEffect(() => {
+    loadProfile();
     const savedImage = localStorage.getItem('profileImage');
     if (savedImage) {
       setProfileImage(savedImage);
     }
   }, []);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (event) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -36,13 +54,21 @@ const Account: React.FC = () => {
     fileInputRef.current?.click();
   };
 
-  const handlePasswordUpdate = () => {
-    const storedPassword = localStorage.getItem('userPassword') || '123456';
-    if (currentPassword !== storedPassword) {
-      alert('Current password is incorrect!');
-      return;
-    }
+  const handleSaveProfile = async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:5000/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ name, company, phone,email })
+      });
+      if (!res.ok) return;
+      alert('Profile updated successfully!');
+    } catch (e) {}
+  };
 
+  const handlePasswordUpdate = async () => {
     if (newPassword.length < 6) {
       alert('New password must be at least 6 characters long.');
       return;
@@ -53,11 +79,26 @@ const Account: React.FC = () => {
       return;
     }
 
-    localStorage.setItem('userPassword', newPassword);
-    alert('Password updated successfully!');
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:5000/user/password', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err?.error || 'Failed to update password');
+        return;
+      }
+      alert('Password updated successfully!');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (e) {
+      alert('Something went wrong');
+    }
   };
 
   return (
@@ -95,20 +136,14 @@ const Account: React.FC = () => {
       <div className="account-section">
         <h2>Personal Profile</h2>
         <p className="section-desc">This information is used to identify you and for billing.</p>
-        <div className="profile-grid">
-          <div className="account-form-group">
-            <label htmlFor="firstName">First Name</label>
-            <input id="firstName" type="text" placeholder="First Name" value={firstName} onChange={e => setFirstName(e.target.value)} />
-          </div>
-          <div className="account-form-group">
-            <label htmlFor="lastName">Last Name</label>
-            <input id="lastName" type="text" placeholder="Last Name" value={lastName} onChange={e => setLastName(e.target.value)} />
-          </div>
+        <div className="account-form-group">
+          <label htmlFor="name">Full Name</label>
+          <input id="name" type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)} />
         </div>
 
         <div className="account-form-group">
           <label htmlFor="email">Email Address</label>
-          <input id="email" type="email" placeholder="Email" value="john.doe@example.com" disabled />
+          <input id="email" type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
         </div>
 
         <div className="account-form-group">
@@ -116,7 +151,12 @@ const Account: React.FC = () => {
           <input id="company" type="text" placeholder="Company" value={company} onChange={e => setCompany(e.target.value)} />
         </div>
 
-        <button className="save-btn">Save Changes</button>
+        <div className="account-form-group">
+          <label htmlFor="phone">Phone</label>
+          <input id="phone" type="text" placeholder="Phone" value={phone} onChange={e => setPhone(e.target.value)} />
+        </div>
+
+        <button className="save-btn" onClick={handleSaveProfile}>Save Changes</button>
       </div>
 
       {/* Security Section */}

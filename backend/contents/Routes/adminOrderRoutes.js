@@ -2,12 +2,13 @@ const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
 const User = require("../models/User");
+// const AdminOrder = require("../models/AdminOrder");
 const { nanoid } = require("nanoid");
 
 // Get all admin orders
 router.get("/admin/orders/getall", async (req, res) => {
   try {
-    const orders = await Order.find().populate('orderedBy');
+    const orders = await Order.find().populate('orderedBy', 'uid');
     
     // Transform the data to match the requested format
     const transformedOrders = orders.map(order => ({
@@ -116,7 +117,7 @@ router.post("/admin/orders/new", async (req, res) => {
     const { order } = req.body;
     
     const orderId = await nanoid(10);
-    const newOrder = new AdminOrder({
+    const newOrder = new Order({
       orderId: orderId,
       customerName: order.customerName,
       productName: order.productName,
@@ -143,10 +144,10 @@ router.post("/admin/orders/new", async (req, res) => {
 router.post("/admin/orders/seed", async (req, res) => {
   try {
     // Check if orders already exist
-    const existingOrders = await AdminOrder.find();
-    if (existingOrders.length > 0) {
-      return res.status(400).json({ message: "Orders already seeded" });
-    }
+    const existingOrders = await Order.find().populate('orderedBy', 'uid');
+    // if (existingOrders.length > 0) {
+    //   return res.status(400).json({ message: "Orders already seeded" });
+    // }
 
     const sampleOrders = [
       {
@@ -162,6 +163,8 @@ router.post("/admin/orders/seed", async (req, res) => {
         productDetails: "High-performance laptop with latest specifications",
         shippingAddress: "123 Main St, Bangalore, Karnataka 560001",
         paymentMethod: "UPI",
+        price: 89999,
+        method: "UPI",
       },
       {
         orderId: await nanoid(10),
@@ -169,7 +172,7 @@ router.post("/admin/orders/seed", async (req, res) => {
         productName: "Wireless Mouse",
         itemCount: 2,
         total: 2598,
-        status: "Acknowledged",
+        status: "Completed",
         orderDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
         customerEmail: "jane.smith@example.com",
         customerPhone: "+91-8765432109",
@@ -177,6 +180,8 @@ router.post("/admin/orders/seed", async (req, res) => {
         shippingAddress: "456 Park Ave, Mumbai, Maharashtra 400001",
         paymentMethod: "Card",
         adminResponse: "Order confirmed and will be shipped within 24 hours",
+        price: 89999,
+        method: "Card",
       },
       {
         orderId: await nanoid(10),
@@ -191,6 +196,8 @@ router.post("/admin/orders/seed", async (req, res) => {
         productDetails: "Comfortable office chair with adjustable height",
         shippingAddress: "789 Oak Rd, Delhi, Delhi 110001",
         paymentMethod: "Net Banking",
+        price: 89999,
+        method: "Net",
       },
       {
         orderId: await nanoid(10),
@@ -206,6 +213,8 @@ router.post("/admin/orders/seed", async (req, res) => {
         shippingAddress: "321 Pine St, Chennai, Tamil Nadu 600001",
         paymentMethod: "UPI",
         adminResponse: "Order cancelled due to out of stock",
+        price: 89999,
+        method: "UPI",
       },
       {
         orderId: await nanoid(10),
@@ -213,7 +222,7 @@ router.post("/admin/orders/seed", async (req, res) => {
         productName: "Smartphone Galaxy S23",
         itemCount: 1,
         total: 75000,
-        status: "Acknowledged",
+        status: "Completed",
         orderDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), // 4 days ago
         customerEmail: "david.brown@example.com",
         customerPhone: "+91-5432109876",
@@ -221,10 +230,12 @@ router.post("/admin/orders/seed", async (req, res) => {
         shippingAddress: "654 Elm St, Hyderabad, Telangana 500001",
         paymentMethod: "Card",
         adminResponse: "Order processed and shipped successfully",
+        price: 89999,
+        method: "Card",
       }
     ];
 
-    await AdminOrder.insertMany(sampleOrders);
+    await Order.insertMany(sampleOrders);
     return res.status(201).json({ message: "Sample orders seeded successfully" });
   } catch (err) {
     console.error(err);

@@ -8,3 +8,4 @@ const adminPreferenceSchema = new mongoose.Schema({
 module.exports = mongoose.model('AdminPreference', adminPreferenceSchema)
 
 
+

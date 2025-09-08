@@ -35,9 +35,10 @@ const AddSalesModal: React.FC<Props> = ({ sale, onClose, onSave }) => {
 
   const handleSubmit = async () => {
     console.log(form);
+    console.log("sale is ",sale)
     if (!sale) {
       const res = await axios.post('http://localhost:5000/admin/sales/new', form);
-      console.log(res.data.message)
+      console.log("THIS IS ",res.data.message)
       if (res.data.message == 'done') {
         window.location.reload();
       }

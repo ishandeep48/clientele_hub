@@ -8,23 +8,42 @@ interface Invoice {
   status: 'Paid' | 'Due';
 }
 
-const Billing: React.FC = () => {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+const Billing = () => {
+  const [invoices, setInvoices] = useState([] as Invoice[]);
   const [outstandingBalance, setOutstandingBalance] = useState(0);
 
-  useEffect(() => {
-    const localInvoices = JSON.parse(localStorage.getItem('billingInvoices') || '[]');
-    setInvoices(localInvoices);
+  const loadInvoices = async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:5000/user/billing', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) return;
+      setInvoices(data as Invoice[]);
+      const totalDue = (data as Invoice[])
+        .filter(inv => inv.status === 'Due')
+        .reduce((sum, inv) => sum + inv.amount, 0);
+      setOutstandingBalance(totalDue);
+    } catch (e) {}
+  };
 
-    const dueInvoices = localInvoices.filter((inv: Invoice) => inv.status === 'Due');
-    const totalDue = dueInvoices.reduce((sum: number, inv: Invoice) => sum + inv.amount, 0);
-    setOutstandingBalance(totalDue);
+  useEffect(() => {
+    loadInvoices();
   }, []);
 
-  const handlePay = (id: string) => {
-    const updated = invoices.map(inv => inv.id === id ? { ...inv, status: 'Paid' } : inv);
-    localStorage.setItem('billingInvoices', JSON.stringify(updated));
-    setInvoices(updated);
+  const handlePay = async (id: string) => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    try {
+      const res = await fetch(`http://localhost:5000/user/billing/${id}/pay`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) return;
+      await loadInvoices();
+    } catch (e) {}
   };
 
   return (

@@ -7,13 +7,35 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const handleLogin = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email.trim() !== '' && password.trim() !== '') {
-      localStorage.setItem('userToken', 'mock-token-123');
+    setError('');
+    if (email.trim() === '' || password.trim() === '') {
+      setError('Please enter both email and password.');
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await fetch('http://localhost:5000/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok || !data?.token) {
+        setError(data?.error || 'Invalid credentials');
+        setLoading(false);
+        return;
+      }
+      localStorage.setItem('userToken', data.token);
+      localStorage.setItem('userEmail', email);
       navigate('/dashboard');
-    } else {
-      alert('Please enter both email and password.');
+    } catch (err) {
+      setError('Something went wrong. Try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,7 +54,7 @@ const Login = () => {
                 id="email"
                 name="email"
                 value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="abc@gmail.com"
                 required
               />
@@ -44,12 +66,13 @@ const Login = () => {
                 id="password"
                 name="password"
                 value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
               />
             </div>
-            <button type="submit" className="login-button">Login</button>
+            {error && <div className="error-text">{error}</div>}
+            <button type="submit" className="login-button" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
           </form>
         </div>
       </div>

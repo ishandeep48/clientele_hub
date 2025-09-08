@@ -1,25 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import './Feedback.css';
 
-const Feedback: React.FC = () => {
-  const [message, setMessage] = useState('');
-  const [feedbackList, setFeedbackList] = useState<string[]>([]);
+interface FeedbackItem {
+  id: string;
+  message: string;
+  rating: number;
+  tag: string;
+  createdAt: string;
+}
 
-  // Load feedback from localStorage
+const Feedback = () => {
+  const [message, setMessage] = useState('');
+  const [rating, setRating] = useState(3);
+  const [tag, setTag] = useState('Suggestion');
+  const [feedbackList, setFeedbackList] = useState([] as FeedbackItem[]);
+
+  const loadFeedback = async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:5000/user/feedback', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) return;
+      setFeedbackList(data as FeedbackItem[]);
+    } catch (e) {}
+  };
+
   useEffect(() => {
-    const storedFeedback = localStorage.getItem('clientele_feedback');
-    if (storedFeedback) {
-      setFeedbackList(JSON.parse(storedFeedback));
-    }
+    loadFeedback();
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (message.trim() === '') return;
-
-    const updatedList = [message, ...feedbackList];
-    localStorage.setItem('clientele_feedback', JSON.stringify(updatedList));
-    setFeedbackList(updatedList);
-    setMessage('');
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:5000/user/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ message, rating, tag })
+      });
+      if (!res.ok) return;
+      setMessage('');
+      setRating(3);
+      setTag('Suggestion');
+      await loadFeedback();
+    } catch (e) {}
   };
 
   return (
@@ -31,6 +59,27 @@ const Feedback: React.FC = () => {
         <div className="left-section">
           <h3>Share Your Experience</h3>
           <p>Your feedback helps us improve our products and services.</p>
+          <div className="feedback-rating">
+            <label>Rating:</label>
+            <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
+              <option value={1}>1 - Poor</option>
+              <option value={2}>2 - Fair</option>
+              <option value={3}>3 - Good</option>
+              <option value={4}>4 - Very Good</option>
+              <option value={5}>5 - Excellent</option>
+            </select>
+          </div>
+
+          <div className="feedback-tag">
+            <label>Category:</label>
+            <select value={tag} onChange={(e) => setTag(e.target.value)}>
+              <option value="Suggestion">Suggestion</option>
+              <option value="Bug Report">Bug Report</option>
+              <option value="Complaint">Complaint</option>
+              <option value="Praise">Praise</option>
+              <option value="Question">Question</option>
+            </select>
+          </div>
           <textarea
             placeholder="Tell us about your experience, or ask a question..."
             value={message}
@@ -46,8 +95,17 @@ const Feedback: React.FC = () => {
             <p>You haven't submitted any feedback yet.</p>
           ) : (
             <ul>
-              {feedbackList.map((msg, index) => (
-                <li key={index}>{msg}</li>
+              {feedbackList.map((item) => (
+                <li key={item.id}>
+                  <div className="feedback-item">
+                    <div className="feedback-header">
+                      <span className="feedback-rating">⭐ {item.rating}/5</span>
+                      <span className="feedback-tag">{item.tag}</span>
+                    </div>
+                    <div className="feedback-message">{item.message}</div>
+                    <small>{item.createdAt}</small>
+                  </div>
+                </li>
               ))}
             </ul>
           )}

@@ -8,11 +8,13 @@ const FeedbackSentimentChart = ({feedbackGraph}) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const feedback =feedbackGraph;
+    const feedback = feedbackGraph;
     console.log(feedback)
-    let good = 0, neutral = 0, bad = 0; // chneged this shi
+    let good = 0, neutral = 0, bad = 0;
 
-    feedback.forEach((rating: any) => {
+    // Use actual ratings from feedback data
+    feedback.forEach((item: any) => {
+      const rating = item.rating || 3;
       if (rating >= 4) good++;
       else if (rating === 3) neutral++;
       else bad++;

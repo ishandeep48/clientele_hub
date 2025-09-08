@@ -4,24 +4,24 @@ const userSchema = new mongoose.Schema({
   uid: {
     type: String,
     unique: true,
-    required: true,
+    // required: true,
   },
   name: {
     type: String,
-    required: true,
+    // required: true,
   },
   email: {
     type: String,
     unique: true,
-    required: true,
+    // required: true,
   },
   password: {
     type: String,
-    required: true,
+    // required: true,
   },
   role: {
     type: String,
-    required: true,
+    // required: true,
     enum: ["user"],
     default: "user",
   },
@@ -45,11 +45,11 @@ const userSchema = new mongoose.Schema({
   },
   phone:{
     type: String,
-    required: true,
+    // required: true,
   },
   joinedAt:{
     type:Date,
-    required: true,
+    // required: true,
     default:Date.now(),
   }
 

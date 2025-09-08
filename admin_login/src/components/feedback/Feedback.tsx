@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import './Feedback.css';
-
+import axios from 'axios';
 interface Feedback {
   id: string;
   message: string;
   customer: string;
   rating: number;
-  tag: 'Suggestion' | 'Issue';
+  tag: 'Suggestion' | 'Bug Report' | 'Complaint' | 'Praise' | 'Question';
   date: string;
 }
 
 const Feedback = () => {
-  const [feedbackList, setFeedbackList] = useState<Feedback[]>([]);
+  const [feedbackList, setFeedbackList] = useState([] as Feedback[]);
+
+  const loadFeedback = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/admin/feedback/all');
+      const data = await res.data;
+      // if (!res.ok) return;
+      setFeedbackList(data as Feedback[]);
+    } catch (e) {}
+  };
 
   useEffect(() => {
-    const storedFeedback = localStorage.getItem('feedbackList');
-    if (storedFeedback) {
-      setFeedbackList(JSON.parse(storedFeedback));
-    }
+    loadFeedback();
   }, []);
 
   return (
@@ -44,7 +50,7 @@ const Feedback = () => {
               <span className={`tag ${fb.tag.toLowerCase()}`}>{fb.tag}</span>
             </span>
             <span>{fb.date}</span>
-            <span className="dots">⋯</span>
+            {/* <span className="dots">⋯</span> */}
           </div>
         ))}
       </div>

@@ -28,7 +28,7 @@ router.get('/admin/sales/all', async (req, res) => {
 })
 router.post('/admin/sales/new', async (req, res) => {
     const data = req.body;
-
+    console.log(data)
     // res.json({message:"hehe"})
     try {
 

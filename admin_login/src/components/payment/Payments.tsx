@@ -80,10 +80,10 @@ Date: ${payment.date}
         </thead>
         <tbody>
           {payments.map((payment: any) => (
-            <tr key={payment.id}>
+            <tr key={payment._id}>
               <td>{payment.Paymentid}</td>
               <td>{payment._id}</td>
-              <td>{payment.orderedBy || "null customer"}</td>
+              <td>{payment.orderedBy?.name || payment.orderedBy || "null customer"}</td>
               <td>{payment.method}</td>
               <td>₹{payment.price}</td>
               <td>{payment.date}</td>

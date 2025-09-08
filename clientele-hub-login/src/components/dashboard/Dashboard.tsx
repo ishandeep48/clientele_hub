@@ -11,55 +11,38 @@ interface Order {
 }
 
 const Dashboard = () => {
-  const [totalOrders, setTotalOrders] = useState<number>(3);
-  const [ordersLastMonth, setOrdersLastMonth] = useState<number>(2);
-  const [pendingPayments, setPendingPayments] = useState<string>('₹1,250.00');
-  const [activeTickets, setActiveTickets] = useState<number>(3);
-  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [ordersLastMonth, setOrdersLastMonth] = useState(0);
+  const [pendingPayments, setPendingPayments] = useState('₹0.00');
+  const [activeTickets, setActiveTickets] = useState(0);
+  const [recentOrders, setRecentOrders] = useState([] as Order[]);
 
   const navigate = useNavigate();
 
-  const loadDashboardData = () => {
+  const loadDashboardData = async () => {
     try {
-      const storedOrders = localStorage.getItem('dashboardOrders');
-      if (storedOrders) {
-        const parsedOrders: Order[] = JSON.parse(storedOrders);
-        const sortedOrders = parsedOrders.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-
-        setRecentOrders(sortedOrders.slice(0, 3));
-        setTotalOrders(parsedOrders.length);
-
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
-        const ordersInLastMonth = parsedOrders.filter(
-          order => new Date(order.createdAt) > oneMonthAgo
-        ).length;
-
-        setOrdersLastMonth(ordersInLastMonth);
-      } else {
-        const defaultOrders: Order[] = [
-          { id: 'ORD-001', orderId: 'ORD-001', product: 'Premium Website Design', status: 'Completed', createdAt: new Date().toISOString() },
-          { id: 'ORD-002', orderId: 'ORD-002', product: 'Logo & Branding Package', status: 'In Progress', createdAt: new Date(Date.now() - 86400000).toISOString() },
-          { id: 'ORD-003', orderId: 'ORD-003', product: 'Social Media Campaign', status: 'Pending', createdAt: new Date(Date.now() - 2 * 86400000).toISOString() },
-        ];
-        localStorage.setItem('dashboardOrders', JSON.stringify(defaultOrders));
-        setRecentOrders(defaultOrders);
-        setTotalOrders(defaultOrders.length);
-        setOrdersLastMonth(2);
-      }
+      const token = localStorage.getItem('userToken');
+      if (!token) return;
+      const res = await fetch('http://localhost:5000/user/dashboard', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) return;
+      setTotalOrders(data.totalOrders || 0);
+      setOrdersLastMonth(data.ordersLastMonth || 0);
+      setPendingPayments(data.pendingPayments || '₹0.00');
+      setActiveTickets(data.activeTickets || 0);
+      setRecentOrders((data.recentOrders || []) as Order[]);
     } catch (error) {
-      console.error("Error loading dashboard data:", error);
+      console.error('Error loading dashboard data:', error);
     }
   };
 
   useEffect(() => {
     loadDashboardData();
-    const handleStorageChange = () => loadDashboardData();
+    const handleStorageChange = () => { loadDashboardData(); };
     window.addEventListener('storage', handleStorageChange);
-    const intervalId = setInterval(loadDashboardData, 2000);
+    const intervalId = setInterval(loadDashboardData, 10000);
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(intervalId);

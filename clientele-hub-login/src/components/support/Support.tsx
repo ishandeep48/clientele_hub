@@ -24,50 +24,43 @@ interface Ticket {
   feedback?: Feedback;
 }
 
-const Support: React.FC = () => {
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+const Support = () => {
+  const [tickets, setTickets] = useState([] as Ticket[]);
+  const [selectedTicket, setSelectedTicket] = useState(null as Ticket | null);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
+  const loadTickets = async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:5000/user/support/tickets', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) return;
+      setTickets(data as Ticket[]);
+    } catch (e) {}
+  };
+
   useEffect(() => {
-    const stored = localStorage.getItem('supportTickets');
-    if (stored) {
-      setTickets(JSON.parse(stored));
-    } else {
-      const dummyTickets: Ticket[] = [
-        {
-          id: 'TKT-2024-001',
-          subject: 'Website is loading slowly',
-          description: 'Our main website has been experiencing significant performance degradation over the last 48 hours. Pages are taking upwards of 10 seconds to load.',
-          status: 'Open',
-          updatedAt: '2024-07-18',
-          responses: [
-            {
-              from: 'Support Team',
-              message: 'Thank you for reaching out. We are investigating the issue and will provide an update shortly.',
-              time: '7/18/2024, 3:30:00 PM',
-            },
-          ],
-        }
-      ];
-      localStorage.setItem('supportTickets', JSON.stringify(dummyTickets));
-      setTickets(dummyTickets);
-    }
+    loadTickets();
   }, []);
 
-  const updateTicket = (updatedTicket: Ticket) => {
-    const updatedTickets = tickets.map(ticket =>
-      ticket.id === updatedTicket.id ? updatedTicket : ticket
-    );
-    setTickets(updatedTickets);
-    localStorage.setItem('supportTickets', JSON.stringify(updatedTickets));
+  const updateTicket = async (updatedTicket: Ticket) => {
+    setTickets(prev => prev.map(t => t.id === updatedTicket.id ? updatedTicket : t));
     setSelectedTicket(updatedTicket);
   };
 
-  const addTicket = (newTicket: Ticket) => {
-    const updated = [newTicket, ...tickets];
-    setTickets(updated);
-    localStorage.setItem('supportTickets', JSON.stringify(updated));
+  const addTicket = async (input: { subject: string; description: string; attachment: string | null; }) => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    const res = await fetch('http://localhost:5000/user/support/tickets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(input)
+    });
+    if (!res.ok) return;
+    await loadTickets();
   };
 
   return (
@@ -92,7 +85,7 @@ const Support: React.FC = () => {
             <tr key={ticket.id}>
               <td>{ticket.id}</td>
               <td>{ticket.subject}</td>
-              <td><span className={`status ${ticket.status.toLowerCase()}`}>{ticket.status}</span></td>
+              <td><span className={`status ${ticket.status}`}>{ticket.status}</span></td>
               <td>{ticket.updatedAt}</td>
               <td><button onClick={() => setSelectedTicket(ticket)}>👁 View</button></td>
             </tr>
@@ -104,14 +97,46 @@ const Support: React.FC = () => {
         <TicketDetailModal
           ticket={selectedTicket}
           onClose={() => setSelectedTicket(null)}
-          onUpdate={updateTicket}
+          onUpdate={async (ticket) => {
+            // decide whether it's response or feedback based on diffs
+            const token = localStorage.getItem('userToken');
+            if (!token) return;
+            if ((ticket.responses?.length || 0) > (selectedTicket.responses?.length || 0)){
+              const newMsg = ticket.responses[ticket.responses.length - 1]?.message;
+              if (newMsg){
+                const res = await fetch(`http://localhost:5000/user/support/tickets/${ticket.id}/respond`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                  body: JSON.stringify({ message: newMsg })
+                });
+                if (!res.ok) return;
+                const updated = await res.json();
+                updateTicket(updated as Ticket);
+                await loadTickets();
+                return;
+              }
+            }
+            if (ticket.feedback && (ticket.feedback.rating !== (selectedTicket.feedback?.rating||0) || ticket.feedback.comment !== (selectedTicket.feedback?.comment||''))){
+              const res = await fetch(`http://localhost:5000/user/support/tickets/${ticket.id}/feedback`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ rating: ticket.feedback.rating, comment: ticket.feedback.comment, close: ticket.status === 'Closed' })
+              });
+              if (!res.ok) return;
+              const updated = await res.json();
+              updateTicket(updated as Ticket);
+              await loadTickets();
+              return;
+            }
+            updateTicket(ticket);
+          }}
         />
       )}
 
       {showCreateModal && (
         <CreateTicketModal
           onClose={() => setShowCreateModal(false)}
-          onCreate={addTicket}
+          onSubmit={addTicket}
         />
       )}
     </div>

@@ -11,7 +11,7 @@ const PaymentModal = ({ payment, onClose }: any) => {
         <h3>Payment Details</h3>
         <p><strong>Payment ID:</strong> {payment.Paymentid}</p>
         <p><strong>Order ID:</strong> {payment._id}</p>
-        <p><strong>Customer:</strong> {payment.orderedBy || "null rn"}</p>
+        <p><strong>Customer:</strong> {payment.orderedBy?.name || "null rn"}</p>
         <p><strong>Method:</strong> {payment.method}</p>
         <p><strong>Amount:</strong> ₹{payment.price}</p>
         <p><strong>Date:</strong> {payment.date}</p>

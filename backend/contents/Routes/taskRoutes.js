@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const Task = require('../models/Task')
+const Ticket = require('../models/Ticket')
+const User = require('../models/User')
 
 // Shape transformer to exactly what frontend expects
 function toFrontendTask(task){
@@ -14,11 +16,32 @@ function toFrontendTask(task){
     }
 }
 
-// Get all tasks
+// Get all tasks (including auto-generated from tickets)
 router.get('/admin/tasks/all', async (req,res)=>{
     try{
+        // Get regular tasks
         const tasks = await Task.find().sort({ dueDate: 1 })
-        return res.json(tasks.map(toFrontendTask))
+        
+        // Get open tickets and convert to tasks
+        const openTickets = await Ticket.find({ status: 'Open' })
+            .populate('user', 'name email')
+            .sort({ createdAt: -1 })
+        
+        const ticketTasks = openTickets.map(ticket => ({
+            title: `Support: ${ticket.subject}`,
+            customer: ticket.user?.name || ticket.user?.email || 'Unknown',
+            status: 'Pending',
+            priority: 'Medium',
+            dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+            assignedUser: 'Unassigned',
+            isTicket: true,
+            ticketId: ticket.ticketId,
+            description: ticket.description
+        }))
+        
+        // Combine regular tasks and ticket tasks
+        const allTasks = [...tasks.map(toFrontendTask), ...ticketTasks]
+        return res.json(allTasks)
     }catch(err){
         console.error(err)
         return res.status(500).json({ error: 'Internal server error' })
@@ -45,10 +68,27 @@ router.post('/admin/tasks/new', async (req,res)=>{
     }
 })
 
-// Update a task by composite keys (title + dueDate)
+// Update a task by composite keys (title + dueDate) or ticketId
 router.put('/admin/tasks/update', async (req,res)=>{
     try{
         const { filter, update } = req.body
+        
+        // Check if this is a ticket-based task
+        if(filter?.ticketId){
+            const ticket = await Ticket.findOne({ ticketId: filter.ticketId })
+            if(!ticket) return res.status(404).json({ error: 'Ticket not found' })
+            
+            // Update ticket status based on task status
+            if(update?.status === 'Completed'){
+                ticket.status = 'Closed'
+                ticket.updatedAt = Date.now()
+                await ticket.save()
+            }
+            
+            return res.json({ message: 'Ticket task updated' })
+        }
+        
+        // Regular task update
         if(!filter || !filter.title || !filter.dueDate){
             return res.status(400).json({ error: 'Missing filter.title or filter.dueDate' })
         }
@@ -97,6 +137,30 @@ router.post('/admin/tasks/seed', async (req,res)=>{
             { title: 'Invoice payment', customer: 'Soylent', status: 'Completed', priority: 'Low', dueDate: new Date(Date.now()-86400000*2), assignedUser: 'Sam' },
         ])
         return res.status(201).json({ message: 'Seeded tasks' })
+    }catch(err){
+        console.error(err)
+        return res.status(500).json({ error: 'Internal server error' })
+    }
+})
+
+// Add admin response to ticket (when task is updated)
+router.post('/admin/tasks/ticket-response', async (req,res)=>{
+    try{
+        const { ticketId, message } = req.body
+        if(!ticketId || !message) return res.status(400).json({ error: 'ticketId and message required' })
+        
+        const ticket = await Ticket.findOne({ ticketId })
+        if(!ticket) return res.status(404).json({ error: 'Ticket not found' })
+        
+        ticket.responses.push({
+            from: 'Admin',
+            message,
+            time: new Date().toLocaleString()
+        })
+        ticket.updatedAt = Date.now()
+        await ticket.save()
+        
+        return res.json({ message: 'Response added to ticket' })
     }catch(err){
         console.error(err)
         return res.status(500).json({ error: 'Internal server error' })

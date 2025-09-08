@@ -19,6 +19,21 @@ const adminSchema = new mongoose.Schema({
         required: true,
         enum:["admin"],
         default: "admin"
+    },
+    lastLogin:{
+        type: Date,
+        // required: true,
+        default: Date.now
+    },
+    lastEmailChanged:{
+        type: Date,
+        // required: true,
+        default: Date.now
+    },
+    lastPasswordChanged:{
+        type: Date,
+        // required: true,
+        default: Date.now
     }
 })
 

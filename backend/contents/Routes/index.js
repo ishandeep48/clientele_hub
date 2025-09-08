@@ -8,6 +8,14 @@ const salesRoutes = require('./salesRoutes')
 const billRoutes = require('./billRoutes')
 const taskRoutes = require('./taskRoutes')
 const preferenceRoutes = require('./preferenceRoutes')
+const userAuth = require('./userAuth')
+const userDashboardRoutes = require('./userDashboardRoutes')
+const userOrdersRoutes = require('./userOrdersRoutes')
+const userBillingRoutes = require('./userBillingRoutes')
+const userSupportRoutes = require('./userSupportRoutes')
+const userFeedbackRoutes = require('./userFeedbackRoutes')
+const adminFeedbackRoutes = require('./adminFeedbackRoutes')
+const userAccountRoutes = require('./userAccountRoutes')
 
 function Routes(app){
     app.use("/",adminAuth);
@@ -20,6 +28,14 @@ function Routes(app){
     app.use('/',billRoutes)
     app.use('/',taskRoutes)
     app.use('/',preferenceRoutes)
+    app.use('/',userAuth)
+    app.use('/',userDashboardRoutes)
+    app.use('/',userOrdersRoutes)
+    app.use('/',userBillingRoutes)
+    app.use('/',userSupportRoutes)
+    app.use('/',userFeedbackRoutes)
+    app.use('/',adminFeedbackRoutes)
+    app.use('/',userAccountRoutes)
 }
 
 module.exports = Routes;

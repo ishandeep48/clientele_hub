@@ -8,11 +8,11 @@ import "./Tasks.css";
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [error, setError] = useState(null as string | null);
+  const [selectedDate, setSelectedDate] = useState(null as Date | null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingOriginal, setEditingOriginal] = useState<any | null>(null);
-  const [form, setForm] = useState<any>({
+  const [editingOriginal, setEditingOriginal] = useState(null as any | null);
+  const [form, setForm] = useState({
     title: '',
     customer: '',
     status: 'Pending',
@@ -62,6 +62,10 @@ const Tasks = () => {
   };
 
   const deleteTask = async (task: any) => {
+    if(task.isTicket){
+      alert('Cannot delete support ticket tasks. Close the ticket instead.');
+      return;
+    }
     try{
       await axios.delete('http://localhost:5000/admin/tasks/delete', { data: { title: task.title, dueDate: task.dueDate } });
       // refresh
@@ -74,7 +78,12 @@ const Tasks = () => {
   }
 
   const openEditModal = (task: any) => {
-    setEditingOriginal({ title: task.title, dueDate: task.dueDate });
+    setEditingOriginal({ 
+      title: task.title, 
+      dueDate: task.dueDate,
+      ticketId: task.ticketId,
+      isTicket: task.isTicket
+    });
     setForm({
       title: task.title,
       customer: task.customer,
@@ -82,23 +91,38 @@ const Tasks = () => {
       priority: PRIORITIES.includes(task.priority) ? task.priority : 'Medium',
       dueDate: toInputDate(task.dueDate),
       assignedUser: task.assignedUser,
+      description: task.description || '',
     });
     setIsModalOpen(true);
   };
 
   const saveEdit = async () => {
     try{
-      await axios.put('http://localhost:5000/admin/tasks/update', {
-        filter: { title: editingOriginal.title, dueDate: editingOriginal.dueDate },
-        update: {
-          title: form.title,
-          customer: form.customer,
-          status: form.status,
-          priority: form.priority,
-          assignedUser: form.assignedUser,
-          dueDate: form.dueDate,
-        }
-      });
+      // Handle ticket-based tasks differently
+      if(editingOriginal?.isTicket && editingOriginal?.ticketId){
+        await axios.put('http://localhost:5000/admin/tasks/update', {
+          filter: { ticketId: editingOriginal.ticketId },
+          update: {
+            status: form.status,
+            priority: form.priority,
+            assignedUser: form.assignedUser,
+          }
+        });
+      } else {
+        // Regular task update
+        await axios.put('http://localhost:5000/admin/tasks/update', {
+          filter: { title: editingOriginal.title, dueDate: editingOriginal.dueDate },
+          update: {
+            title: form.title,
+            customer: form.customer,
+            status: form.status,
+            priority: form.priority,
+            assignedUser: form.assignedUser,
+            dueDate: form.dueDate,
+          }
+        });
+      }
+      
       const res = await axios.get('http://localhost:5000/admin/tasks/all');
       setTasks(Array.isArray(res.data) ? res.data : []);
       setIsModalOpen(false);
@@ -149,8 +173,11 @@ const Tasks = () => {
                     isSameDate(task.dueDate, selectedDate)
                   )
                   .map((task: any, idx: number) => (
-                    <tr key={idx}>
-                      <td>{task.title}</td>
+                    <tr key={idx} style={{ backgroundColor: task.isTicket ? '#fef3c7' : 'transparent' }}>
+                      <td>
+                        {task.title}
+                        {task.isTicket && <span style={{ marginLeft: 8, fontSize: '0.8em', color: '#d97706' }}>🎫</span>}
+                      </td>
                       <td>{task.customer}</td>
                       <td>
                         <span className={`status-badge ${task.status.toLowerCase()}`}>
@@ -166,7 +193,7 @@ const Tasks = () => {
                       <td>{task.assignedUser}</td>
                       <td>
                         <button onClick={()=>openEditModal(task)}>Edit</button>
-                        <button onClick={()=>deleteTask(task)}>Delete</button>
+                        {!task.isTicket && <button onClick={()=>deleteTask(task)}>Delete</button>}
                       </td>
                     </tr>
                   ))
@@ -178,15 +205,31 @@ const Tasks = () => {
       {isModalOpen && (
         <div style={{ position: 'fixed', inset: 0 as any, background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', borderRadius: 8, padding: 20, width: 500, maxWidth: '90%' }}>
-            <h3 style={{ marginTop: 0 }}>Edit Task</h3>
+            <h3 style={{ marginTop: 0 }}>
+              {editingOriginal?.isTicket ? 'Support Ticket Task' : 'Edit Task'}
+            </h3>
+            {editingOriginal?.isTicket && (
+              <div style={{ background: '#f3f4f6', padding: 10, borderRadius: 4, marginBottom: 16 }}>
+                <strong>Ticket ID:</strong> {editingOriginal.ticketId}<br/>
+                <strong>Description:</strong> {form.description}
+              </div>
+            )}
             <div style={{ display: 'grid', gap: 12 }}>
               <label style={{ display: 'grid', gap: 6 }}>
                 <span>Title</span>
-                <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                <input 
+                  value={form.title} 
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  disabled={editingOriginal?.isTicket}
+                />
               </label>
               <label style={{ display: 'grid', gap: 6 }}>
                 <span>Customer</span>
-                <input value={form.customer} onChange={(e) => setForm({ ...form, customer: e.target.value })} />
+                <input 
+                  value={form.customer} 
+                  onChange={(e) => setForm({ ...form, customer: e.target.value })}
+                  disabled={editingOriginal?.isTicket}
+                />
               </label>
               <label style={{ display: 'grid', gap: 6 }}>
                 <span>Status</span>
@@ -204,10 +247,12 @@ const Tasks = () => {
                   ))}
                 </select>
               </label>
-              <label style={{ display: 'grid', gap: 6 }}>
-                <span>Due Date</span>
-                <input type="date" value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} />
-              </label>
+              {!editingOriginal?.isTicket && (
+                <label style={{ display: 'grid', gap: 6 }}>
+                  <span>Due Date</span>
+                  <input type="date" value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} />
+                </label>
+              )}
               <label style={{ display: 'grid', gap: 6 }}>
                 <span>Assigned User</span>
                 <input value={form.assignedUser} onChange={(e) => setForm({ ...form, assignedUser: e.target.value })} />

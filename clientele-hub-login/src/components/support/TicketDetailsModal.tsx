@@ -28,7 +28,7 @@ interface Props {
   onUpdate: (ticket: Ticket) => void;
 }
 
-const TicketDetailModal: React.FC<Props> = ({ ticket, onClose, onUpdate }) => {
+const TicketDetailModal = ({ ticket, onClose, onUpdate }: Props) => {
   const [newMessage, setNewMessage] = useState('');
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');

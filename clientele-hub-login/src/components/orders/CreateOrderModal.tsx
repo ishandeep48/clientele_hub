@@ -4,6 +4,7 @@ import './CreateOrderModal.css';
 
 interface CreateOrderModalProps {
   onClose: () => void;
+  onCreated?: () => void;
 }
 
 interface OrderItem {
@@ -12,7 +13,7 @@ interface OrderItem {
   price: number;
 }
 
-const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ onClose }) => {
+const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ onClose, onCreated }) => {
   const [clientInfo, setClientInfo] = useState({
     clientName: '',
     email: '',
@@ -61,28 +62,32 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ onClose }) => {
     return items.reduce((total, item) => total + item.qty * item.price, 0);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!clientInfo.clientName || !clientInfo.email || items.length === 0) {
       alert('Please fill all required fields');
       return;
     }
-
-    const newOrder = {
-      clientInfo,
-      shippingAddress: address,
-      items,
-      paymentMode,
-      orderNotes,
-      date: new Date().toLocaleDateString(),
-      total: getOrderTotal(),
-    };
-
-    const existing = JSON.parse(localStorage.getItem('orders') || '[]');
-    existing.push(newOrder);
-    localStorage.setItem('orders', JSON.stringify(existing));
-
-    window.dispatchEvent(new Event('storage'));
-    onClose();
+    try {
+      const token = localStorage.getItem('userToken');
+      const total = getOrderTotal();
+      const res = await fetch('http://localhost:5000/user/orders/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ total, paymentMode })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err?.error || 'Failed to create order');
+        return;
+      }
+      onClose();
+      if (onCreated) onCreated();
+    } catch (e) {
+      alert('Something went wrong');
+    }
   };
 
   return (

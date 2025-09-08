@@ -38,18 +38,23 @@
 .priority-badge {
   padding: 4px 8px;
   border-radius: 6px;
-  color: #fff;
+  color: #ffffff;;
   font-size: 0.9rem;
   text-transform: capitalize;
 }
-
+.status-badge.in.progress{
+  background-color: black;
+}
 .status-badge.pending {
+  color:white;
   background-color: orange;
 }
 .status-badge.completed {
+  color:white;
   background-color: green;
 }
 .status-badge.overdue {
+  color:white;
   background-color: red;
 }
 

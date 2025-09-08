@@ -10,12 +10,12 @@ interface Props {
   }) => void;
 }
 
-const CreateTicketModal: React.FC<Props> = ({ onClose, onSubmit }) => {
+const CreateTicketModal = ({ onClose, onSubmit }: Props) => {
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
   const [attachment, setAttachment] = useState<string | null>(null);
 
-  const handleAttachment = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAttachment = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
 const User = require("../models/User");
+const Feedback = require("../models/Feedback");
 const mongoose = require("mongoose");
 const { nanoid } = require("nanoid");
 const hashPassword = require("../functions/hashing");
@@ -31,13 +32,15 @@ router.get("/admin/orders/all", async (req, res) => {
       })
     );
 
-    //feedback sentiment chart
-    const feedbackSentiment = orders.reduce((acc, order) => {
-      if (order.rating) {
-        acc.push(order.rating);
-      }
-      return acc;
-    }, []);
+    //feedback sentiment chart - use actual customer feedback
+    const feedbackData = await Feedback.find().populate('user', 'name email');
+    const feedbackSentiment = feedbackData.map(f => ({
+      message: f.message,
+      rating: f.rating || 3,
+      tag: f.tag || 'Suggestion',
+      customer: f.user?.name || f.user?.email || 'Unknown',
+      date: new Date(f.createdAt).toLocaleDateString()
+    }));
     //sales chart
     const salesOverview = orders.reduce((acc, order) => {
       const date = new Date(order.date).toLocaleDateString();

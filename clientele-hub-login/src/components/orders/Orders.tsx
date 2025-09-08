@@ -26,10 +26,10 @@ interface NewOrderData {
   orderItems: OrderItem[];
 }
 
-const Orders: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+const Orders = () => {
+  const [orders, setOrders] = useState([] as Order[]);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState(null as Order | null);
   const [isLoading, setIsLoading] = useState(true);
 
   const sampleOrders: Order[] = [
@@ -95,16 +95,33 @@ const Orders: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    setIsLoading(true);
-    const storedOrders = JSON.parse(localStorage.getItem('orders') || 'null');
-    if (storedOrders && storedOrders.length > 0) {
-      setOrders(storedOrders);
-    } else {
-      setOrders(sampleOrders);
-      localStorage.setItem('orders', JSON.stringify(sampleOrders));
+  const loadOrders = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        setOrders([]);
+        setIsLoading(false);
+        return;
+      }
+      const res = await fetch('http://localhost:5000/user/orders', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setOrders([]);
+      } else {
+        setOrders(data as Order[]);
+      }
+    } catch (e) {
+      setOrders([]);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    loadOrders();
   }, []);
 
   const formatCurrency = (amount: number): string => {
@@ -166,6 +183,10 @@ const Orders: React.FC = () => {
       {showCreateModal && (
         <CreateOrderModal
           onClose={() => setShowCreateModal(false)}
+          onCreated={() => {
+            setShowCreateModal(false);
+            loadOrders();
+          }}
           // onCreate={addOrder}
         />
       )}
