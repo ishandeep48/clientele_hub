@@ -91,7 +91,7 @@ const TicketDetailModal = ({ ticket, onClose, onUpdate }: Props) => {
           <p>{ticket.description}</p>
         </div>
 
-        <div className="section">
+        {/* <div className="section">
           <h3>Conversation</h3>
           {(ticket.responses?.length ?? 0) > 0 ? (
             ticket.responses!.map((r, i) => (
@@ -109,7 +109,7 @@ const TicketDetailModal = ({ ticket, onClose, onUpdate }: Props) => {
             placeholder="Type your response..."
           />
           <button onClick={sendResponse}>Send</button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

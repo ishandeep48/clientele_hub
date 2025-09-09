@@ -127,9 +127,9 @@ const Dashboard = () => {
           <p className="card-subtitle">Need help or want to see what's new?</p>
           <div className="action-buttons">
             <button className="button-primary" onClick={() => navigate('/support')}>Raise a Ticket</button>
-            <button className="button-secondary" onClick={() => navigate('/notifications')}>
+            {/* <button className="button-secondary" onClick={() => navigate('/notifications')}>
               View Notifications
-            </button>
+            </button> */}
             <button className="button-tertiary" onClick={() => navigate('/account')}>Manage Account</button>
           </div>
         </div>

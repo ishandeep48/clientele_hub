@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Chatbot.css';
 
 interface Message {
@@ -19,50 +20,99 @@ interface Ticket {
   status: string;
 }
 
-const Chatbot: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+const Chatbot = () => {
+  const [messages, setMessages] = useState([] as Message[]);
   const [input, setInput] = useState('');
   const [open, setOpen] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
     const userMsg: Message = { sender: 'user', text: input };
-    const botMsg: Message = { sender: 'bot', text: getBotResponse(input) };
-    setMessages((prev) => [...prev, userMsg, botMsg]);
+    setMessages((prev) => [...prev, userMsg]);
+    try{
+      const botText = await getBotResponse(input);
+      const botMsg: Message = { sender: 'bot', text: botText };
+      setMessages((prev) => [...prev, botMsg]);
+    }catch(e){
+      const botMsg: Message = { sender: 'bot', text: 'Sorry, something went wrong.' };
+      setMessages((prev) => [...prev, botMsg]);
+    }
     setInput('');
   };
 
-  const getBotResponse = (query: string): string => {
+  const getBotResponse = async (query: string): Promise<string> => {
     const q = query.toLowerCase();
-    const orders: Order[] = JSON.parse(localStorage.getItem('orders') || '[]');
-    const tickets: Ticket[] = JSON.parse(localStorage.getItem('tickets') || '[]');
+    const token = localStorage.getItem('userToken');
+    if(!token){
+      return 'Please log in to view your account information.';
+    }
 
     // ORDER-RELATED QUERIES
     if (q.includes('order') && q.includes('status')) {
-      if (orders.length === 0) return 'You have no orders currently.';
-      return orders.map(o => `${o.product} (ID: ${o.orderId}) - ${o.status}`).join('\n');
+      try{
+        const res = await axios.get('http://localhost:5000/user/orders', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const orders = Array.isArray(res.data) ? res.data : [];
+        if (orders.length === 0) return 'You have no orders currently.';
+        return orders.map((o: any) => `Order #${o.id} - ${o.status} - ₹${o.total} (${o.date})`).join('\n');
+      }catch(err){
+        return 'Could not fetch your orders right now.';
+      }
     }
 
     if (q.includes('total') && q.includes('order')) {
-      return `You have a total of ${orders.length} orders.`;
+      try{
+        const res = await axios.get('http://localhost:5000/user/orders', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const orders = Array.isArray(res.data) ? res.data : [];
+        return `You have a total of ${orders.length} orders.`;
+      }catch(err){
+        return 'Could not fetch your orders right now.';
+      }
     }
 
     if (q.includes('last') && q.includes('order')) {
-      const last = orders[orders.length - 1];
-      return last ? `Your last order was ${last.product} with status ${last.status}` : 'No recent orders found.';
+      try{
+        const res = await axios.get('http://localhost:5000/user/orders', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const orders = Array.isArray(res.data) ? res.data : [];
+        const last = orders[0];
+        return last ? `Your last order is #${last.id} with status ${last.status} for ₹${last.total}` : 'No recent orders found.';
+      }catch(err){
+        return 'Could not fetch your orders right now.';
+      }
     }
 
     // TICKET-RELATED QUERIES
     if (q.includes('ticket') || q.includes('support') || q.includes('complaint')) {
-      if (tickets.length === 0) return 'No support tickets found.';
-      return tickets.map(t => `#${t.id}: ${t.subject} (${t.status})`).join('\n');
+      try{
+        const res = await axios.get('http://localhost:5000/user/support/tickets', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const tickets = Array.isArray(res.data) ? res.data : [];
+        if (tickets.length === 0) return 'No support tickets found.';
+        return tickets.map((t: any) => `#${t.id}: ${t.subject} (${t.status})`).join('\n');
+      }catch(err){
+        return 'Could not fetch your tickets right now.';
+      }
     }
 
     if (q.includes('open ticket')) {
-      const openTickets = tickets.filter(t => t.status.toLowerCase() === 'open');
-      return openTickets.length > 0
-        ? openTickets.map(t => `#${t.id}: ${t.subject}`).join('\n')
-        : 'No open tickets right now.';
+      try{
+        const res = await axios.get('http://localhost:5000/user/support/tickets', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const tickets = Array.isArray(res.data) ? res.data : [];
+        const openTickets = tickets.filter((t: any) => String(t.status).toLowerCase() === 'open');
+        return openTickets.length > 0
+          ? openTickets.map((t: any) => `#${t.id}: ${t.subject}`).join('\n')
+          : 'No open tickets right now.';
+      }catch(err){
+        return 'Could not fetch your tickets right now.';
+      }
     }
 
     return "I can help you with orders or support tickets. Try asking 'What is the status of my order?' or 'Show my open tickets.'";

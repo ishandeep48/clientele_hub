@@ -76,7 +76,14 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ onClose, onCreated 
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {})
         },
-        body: JSON.stringify({ total, paymentMode })
+        body: JSON.stringify({ 
+          total, 
+          paymentMode,
+          items,
+          address,
+          notes: orderNotes,
+          clientInfo
+        })
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -140,7 +147,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ onClose, onCreated 
         <div className="modal-field">
           <select value={paymentMode} onChange={(e) => setPaymentMode(e.target.value)}>
             <option value="">Select Payment Mode</option>
-            <option value="Cash">Cash</option>
+            <option value="Net">Net</option>
             <option value="Card">Card</option>
             <option value="UPI">UPI</option>
           </select>

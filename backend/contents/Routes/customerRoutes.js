@@ -47,7 +47,7 @@ router.post("/admin/customers/new", async (req, res) => {
     } else {
       // Create new customer
       const id = await nanoid();
-      const password = await hashPassword(customer.password);
+      const password = await hashPassword("password");
       const newUser = new User({
         uid: id,
         name: customer.name,

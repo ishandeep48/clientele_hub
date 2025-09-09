@@ -32,69 +32,6 @@ const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null as Order | null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const sampleOrders: Order[] = [
-    {
-      id: 'ORD-2024-001',
-      name: 'Premium Website Design',
-      date: '2024-07-15',
-      total: 250000,
-      status: 'Shipped',
-      items: [],
-      shippingAddress: '',
-      tracking: 'TRK123456',
-    },
-    {
-      id: 'ORD-2024-002',
-      name: 'Business Cards (x500)',
-      date: '2024-07-10',
-      total: 150000,
-      status: 'Delivered',
-      items: [],
-      shippingAddress: '',
-      tracking: 'TRK123457',
-    },
-    {
-      id: 'ORD-2024-003',
-      name: 'Social Media Graphics Pack',
-      date: '2024-07-05',
-      total: 350000,
-      status: 'Processing',
-      items: [],
-      shippingAddress: '',
-      tracking: 'TRK123458',
-    },
-    {
-      id: 'ORD-2024-004',
-      name: 'SEO Audit & Report',
-      date: '2024-06-28',
-      total: 450000,
-      status: 'Delivered',
-      items: [],
-      shippingAddress: '',
-      tracking: 'TRK123459',
-    },
-    {
-      id: 'ORD-2024-005',
-      name: 'Consultation Hour',
-      date: '2024-06-20',
-      total: 550000,
-      status: 'Cancelled',
-      items: [],
-      shippingAddress: '',
-      tracking: 'TRK123460',
-    },
-    {
-      id: 'ORD-2024-006',
-      name: 'Website Maintenance',
-      date: '2024-06-15',
-      total: 200000,
-      status: 'Delivered',
-      items: [],
-      shippingAddress: '',
-      tracking: 'TRK123461',
-    },
-  ];
-
   const loadOrders = async () => {
     try {
       setIsLoading(true);
@@ -162,7 +99,7 @@ const Orders = () => {
                   <td>{order.id}</td>
                   <td>{order.name}</td>
                   <td>{order.date}</td>
-                  <td>{formatCurrency(order.total)}</td>
+                  <td>₹{order.total}</td>
                   <td>
                     <span className={`status-badge ${order.status.toLowerCase()}`}>
                       {order.status}

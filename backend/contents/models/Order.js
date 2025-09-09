@@ -28,6 +28,32 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     // required: true,
   },
+  // Array of ordered items added to support client display
+  items: {
+    type: [
+      new mongoose.Schema({
+        product: { type: String, required: true },
+        quantity: { type: Number, required: true, min: 1, default: 1 },
+        price: { type: Number, required: true, min: 0, default: 0 },
+      }, { _id: false })
+    ],
+    default: []
+  },
+  // Flattened shipping address string for quick rendering on client
+  shippingAddress: {
+    type: String,
+    default: ''
+  },
+  // Optional free-text notes from customer
+  notes: {
+    type: String,
+    default: ''
+  },
+  // Optional tracking string
+  tracking: {
+    type: String,
+    default: ''
+  },
   rating: {
     type: Number,
     min: 1,

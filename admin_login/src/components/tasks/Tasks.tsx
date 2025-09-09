@@ -9,6 +9,7 @@ const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null as string | null);
+  const [saving, setSaving] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null as Date | null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOriginal, setEditingOriginal] = useState(null as any | null);
@@ -16,7 +17,7 @@ const Tasks = () => {
     title: '',
     customer: '',
     status: 'Pending',
-    priority: 'Medium',
+    // priority: 'Medium',
     dueDate: '',
     assignedUser: ''
   });
@@ -28,6 +29,7 @@ const Tasks = () => {
       try {
         const res = await axios.get('http://localhost:5000/admin/tasks/all');
         const data = Array.isArray(res.data) ? res.data : [];
+        console.log(data)
         setTasks(data);
       } catch (e) {
         console.error('Failed to fetch tasks', e);
@@ -47,12 +49,14 @@ const Tasks = () => {
 
   const isSameDate = (taskDate: string, selected: Date | null) => {
     if (!selected) return true;
+    console.log(selected)
     const task = new Date(taskDate);
+    console.log(task)
     return task.toDateString() === selected.toDateString();
   };
 
   const STATUSES = ['Pending','In Progress','Completed','Cancelled'];
-  const PRIORITIES = ['Low','Medium','High','Critical'];
+  // const PRIORITIES = ['Low','Medium','High','Critical'];
   const toInputDate = (dateStr: string) => {
     const d = new Date(dateStr);
     const y = d.getFullYear();
@@ -88,7 +92,7 @@ const Tasks = () => {
       title: task.title,
       customer: task.customer,
       status: STATUSES.includes(task.status) ? task.status : 'Pending',
-      priority: PRIORITIES.includes(task.priority) ? task.priority : 'Medium',
+      // priority: PRIORITIES.includes(task.priority) ? task.priority : 'Medium',
       dueDate: toInputDate(task.dueDate),
       assignedUser: task.assignedUser,
       description: task.description || '',
@@ -97,17 +101,21 @@ const Tasks = () => {
   };
 
   const saveEdit = async () => {
+    if(saving) return;
+    setSaving(true);
     try{
       // Handle ticket-based tasks differently
+      
       if(editingOriginal?.isTicket && editingOriginal?.ticketId){
+        console.log(1111)
         await axios.put('http://localhost:5000/admin/tasks/update', {
           filter: { ticketId: editingOriginal.ticketId },
           update: {
             status: form.status,
-            priority: form.priority,
+            // priority: form.priority,
             assignedUser: form.assignedUser,
           }
-        });
+        }, { headers: { 'Content-Type': 'application/json' } });
       } else {
         // Regular task update
         await axios.put('http://localhost:5000/admin/tasks/update', {
@@ -116,11 +124,11 @@ const Tasks = () => {
             title: form.title,
             customer: form.customer,
             status: form.status,
-            priority: form.priority,
+            // priority: form.priority,
             assignedUser: form.assignedUser,
-            dueDate: form.dueDate,
+            dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : undefined,
           }
-        });
+        }, { headers: { 'Content-Type': 'application/json' } });
       }
       
       const res = await axios.get('http://localhost:5000/admin/tasks/all');
@@ -130,6 +138,8 @@ const Tasks = () => {
     }catch(e){
       console.error('Failed to update task', e);
       alert('Failed to update task');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -156,9 +166,9 @@ const Tasks = () => {
                 <th>Task Title</th>
                 <th>Customer</th>
                 <th>Status</th>
-                <th>Priority</th>
+                {/* <th>Priority</th> */}
                 <th>Due Date</th>
-                <th>Assigned User</th>
+                {/* <th>Assigned User</th> */}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -184,13 +194,13 @@ const Tasks = () => {
                           {task.status}
                         </span>
                       </td>
-                      <td>
+                      {/* <td>
                         <span className={`priority-badge ${task.priority.toLowerCase()}`}>
                           {task.priority}
                         </span>
-                      </td>
+                      </td> */}
                       <td>{formatDate(task.dueDate)}</td>
-                      <td>{task.assignedUser}</td>
+                      {/* <td>{task.assignedUser}</td> */}
                       <td>
                         <button onClick={()=>openEditModal(task)}>Edit</button>
                         {!task.isTicket && <button onClick={()=>deleteTask(task)}>Delete</button>}
@@ -240,12 +250,12 @@ const Tasks = () => {
                 </select>
               </label>
               <label style={{ display: 'grid', gap: 6 }}>
-                <span>Priority</span>
-                <select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}>
-                  {PRIORITIES.map((p) => (
+                {/* <span>Priority</span> */}
+                {/* <select value={form.priority} onChange={(e) => setForm({ ...form, priority: e.target.value })}> */}
+                  {/* {PRIORITIES.map((p) => (
                     <option key={p} value={p}>{p}</option>
-                  ))}
-                </select>
+                  ))} */}
+                {/* </select> */}
               </label>
               {!editingOriginal?.isTicket && (
                 <label style={{ display: 'grid', gap: 6 }}>
@@ -254,13 +264,13 @@ const Tasks = () => {
                 </label>
               )}
               <label style={{ display: 'grid', gap: 6 }}>
-                <span>Assigned User</span>
-                <input value={form.assignedUser} onChange={(e) => setForm({ ...form, assignedUser: e.target.value })} />
+                {/* <span>Assigned User</span> */}
+                {/* <input value={form.assignedUser} onChange={(e) => setForm({ ...form, assignedUser: e.target.value })} /> */}
               </label>
             </div>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
               <button onClick={() => { setIsModalOpen(false); setEditingOriginal(null); }}>Cancel</button>
-              <button onClick={saveEdit}>Save</button>
+              <button onClick={saveEdit} disabled={saving}>{saving ? 'Saving...' : 'Save'}</button>
             </div>
           </div>
         </div>

@@ -8,7 +8,7 @@ const { nanoid } = require("nanoid");
 // Get all admin orders
 router.get("/admin/orders/getall", async (req, res) => {
   try {
-    const orders = await Order.find().populate('orderedBy', 'uid');
+    const orders = await Order.find().populate('orderedBy', 'uid name email phone');
     
     // Transform the data to match the requested format
     const transformedOrders = orders.map(order => ({
@@ -18,10 +18,10 @@ router.get("/admin/orders/getall", async (req, res) => {
         email: order.orderedBy ? order.orderedBy.email : '',
         phone: order.orderedBy ? order.orderedBy.phone : ''
       },
-      product: 'Product', // Placeholder since your Order model doesn't have product info
+      product: (order.items && order.items.length > 0) ? order.items.map(i=>i.product).slice(0,2).join(', ') : 'Product',
       status: order.status,
       total: order.price,
-      items: 1, // Default to 1 since your model doesn't have itemCount
+      items: Array.isArray(order.items) ? order.items.length : 0,
       date: new Date(order.date).toISOString()
     }));
     
@@ -50,14 +50,15 @@ router.get("/admin/orders/:id", async (req, res) => {
         email: order.orderedBy ? order.orderedBy.email : '',
         phone: order.orderedBy ? order.orderedBy.phone : ''
       },
-      product: 'Product', // Placeholder since your model doesn't have product info
+      product: (order.items && order.items.length > 0) ? order.items.map(i=>i.product).slice(0,2).join(', ') : 'Product',
       status: order.status,
       total: order.price,
-      items: 1, // Default to 1
+      items: Array.isArray(order.items) ? order.items.length : 0,
+      itemsList: Array.isArray(order.items) ? order.items.map(i=>({ product: i.product, quantity: i.quantity, price: i.price })) : [],
       date: new Date(order.date).toISOString(),
-      adminResponse: '', // Your model doesn't have this field
-      productDetails: 'Product details not available', // Placeholder
-      shippingAddress: 'Address not available', // Placeholder
+      adminResponse: '',
+      productDetails: order.notes || 'Product details not available',
+      shippingAddress: order.shippingAddress || 'Address not available',
       paymentMethod: order.method,
     };
     

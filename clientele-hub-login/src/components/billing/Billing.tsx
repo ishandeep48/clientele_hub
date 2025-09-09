@@ -11,6 +11,7 @@ interface Invoice {
 const Billing = () => {
   const [invoices, setInvoices] = useState([] as Invoice[]);
   const [outstandingBalance, setOutstandingBalance] = useState(0);
+  const [isPayingAll, setIsPayingAll] = useState(false);
 
   const loadInvoices = async () => {
     const token = localStorage.getItem('userToken');
@@ -46,6 +47,28 @@ const Billing = () => {
     } catch (e) {}
   };
 
+  const handlePayAll = async () => {
+    if (isPayingAll) return;
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    const due = invoices.filter(inv => inv.status === 'Due');
+    if (due.length === 0) return;
+    setIsPayingAll(true);
+    try {
+      for (const inv of due) {
+        const res = await fetch(`http://localhost:5000/user/billing/${inv.id}/pay`, {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        // if any fails, continue to try others
+      }
+      await loadInvoices();
+    } catch (e) {
+    } finally {
+      setIsPayingAll(false);
+    }
+  };
+
   return (
     <div className="billing-container">
       <h1 className="billing-title">Billing & Payments</h1>
@@ -57,7 +80,9 @@ const Billing = () => {
           <p className="billing-description">Your current account balance.</p>
           <p className="billing-price">${outstandingBalance.toFixed(2)}</p>
           {outstandingBalance > 0 && (
-            <button className="btn-primary mt">Pay Now</button>
+            <button className="btn-primary mt" onClick={handlePayAll} disabled={isPayingAll}>
+              {isPayingAll ? 'Processing...' : 'Pay Now'}
+            </button>
           )}
         </div>
       </div>
@@ -71,7 +96,7 @@ const Billing = () => {
               <th>Date</th>
               <th>Amount</th>
               <th>Status</th>
-              <th>Actions</th>
+              {/* <th>Actions</th> */}
             </tr>
           </thead>
           <tbody>
@@ -85,13 +110,13 @@ const Billing = () => {
                     {inv.status}
                   </span>
                 </td>
-                <td>
+                {/* <td>
                   {inv.status === 'Due' ? (
                     <button className="btn-sm btn-primary" onClick={() => handlePay(inv.id)}>Pay Now</button>
                   ) : (
                     <button className="btn-sm btn-secondary">Download</button>
                   )}
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>

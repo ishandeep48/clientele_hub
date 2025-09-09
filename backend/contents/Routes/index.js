@@ -15,6 +15,7 @@ const userBillingRoutes = require('./userBillingRoutes')
 const userSupportRoutes = require('./userSupportRoutes')
 const userFeedbackRoutes = require('./userFeedbackRoutes')
 const adminFeedbackRoutes = require('./adminFeedbackRoutes')
+const adminNotificationRoutes = require('./adminNotificationRoutes')
 const userAccountRoutes = require('./userAccountRoutes')
 
 function Routes(app){
@@ -35,6 +36,7 @@ function Routes(app){
     app.use('/',userSupportRoutes)
     app.use('/',userFeedbackRoutes)
     app.use('/',adminFeedbackRoutes)
+    app.use('/',adminNotificationRoutes)
     app.use('/',userAccountRoutes)
 }
 

@@ -118,9 +118,9 @@ const Bills: React.FC = () => {
                 <td>₹{bill.totalAmount}</td>
                 <td>₹{bill.gst}</td>
                 <td>
-                  <button className="view-btn" onClick={() => handleViewBill(bill)}>
+                  {/* <button className="view-btn" onClick={() => handleViewBill(bill)}>
                     View
-                  </button>
+                  </button> */}
                   <button className="download-btn" onClick={() => handleDownloadPDF(bill)}>
                     Download PDF
                   </button>

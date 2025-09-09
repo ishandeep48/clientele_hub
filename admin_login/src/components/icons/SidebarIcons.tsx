@@ -21,7 +21,7 @@ export const sidebarItems = [
   { label: 'Products', icon: <MdInventory />, path: '/products' },
   { label: 'Orders', icon: <MdShoppingCart />, path: '/orders' },
   { label: 'Payments', icon: <MdPayment />, path: '/payments' },
-  { label: 'Sales', icon: <MdAttachMoney />, path: '/sales' },
+  // { label: 'Sales', icon: <MdAttachMoney />, path: '/sales' },
   { label: 'Bills', icon: <MdAssignment />, path: '/bills' },
   { label: 'Tasks', icon: <MdTask />, path: '/tasks' },
   { label: 'Feedback', icon: <MdFeedback />, path: '/feedback' },

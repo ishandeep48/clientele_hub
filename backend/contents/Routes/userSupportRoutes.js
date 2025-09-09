@@ -30,9 +30,19 @@ router.get('/user/support/tickets', verifyToken, async (req,res)=>{
 router.post('/user/support/tickets', verifyToken, async (req,res)=>{
   try{
     const { subject, description, attachment } = req.body || {}
+    console.log(req.body)
     if(!subject || !description) return res.status(400).json({ error: 'subject and description required' })
-    const t = await Ticket.create({ user: req.user.userID, subject, description, attachment, status: 'Open' })
-    return res.status(201).json(toFrontendTicket(t))
+      const dueDate = new Date();
+    const newTicket = new Ticket({
+      user: req.user.userID,
+      subject,
+      description,
+      status: 'Pending',
+      dueDate: new Date(dueDate.setDate(dueDate.getDate() + 7)), // 7 days from now
+    })
+    await newTicket.save()
+    // const t = await Ticket.create({ user: req.user.userID, subject, description, attachment, status: 'Open', dueDate })
+    return res.status(201).json(toFrontendTicket(newTicket))
   }catch(err){
     console.error(err)
     return res.status(500).json({ error: 'Internal server error' })

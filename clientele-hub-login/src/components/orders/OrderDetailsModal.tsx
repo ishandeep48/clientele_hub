@@ -12,10 +12,11 @@ interface OrderItem {
 interface Order {
   id: string;
   date: string;
-  status: 'Completed' | 'In Progress' | 'Pending'; // Union type for specific statuses
+  status: 'Delivered' | 'Processing' | 'Shipped' | 'Cancelled';
   items: OrderItem[];
   total: number;
   shippingAddress: string;
+  tracking: string;
 }
 
 // Define the props for the OrderDetailsModal component.
@@ -71,13 +72,13 @@ const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
                 <tr key={index}>
                   <td>{item.product}</td>
                   <td>{item.quantity}</td>
-                  <td>${item.price.toFixed(2)}</td>
+                  <td>₹{item.price.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           <div className="order-total">
-            <strong>Total: ${order.total.toFixed(2)}</strong>
+            <strong>Total: ₹{order.total.toFixed(2)}</strong>
           </div>
 
           <div className="divider"></div>
@@ -87,12 +88,12 @@ const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
 
           <div className="tracking-info">
             <span className="info-label">Tracking Information</span>
-            <span className="info-value">17999AA10123456789</span>
+            <span className="info-value">{order.tracking || '—'}</span>
           </div>
 
           <div className="action-buttons">
-            <button className="download-btn">Download Invoice</button>
-            <button className="cancel-btn">Request Cancellation</button>
+            {/* <button className="download-btn">Download Invoice</button>
+            <button className="cancel-btn">Request Cancellation</button> */}
           </div>
         </div>
       </div>

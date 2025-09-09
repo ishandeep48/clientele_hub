@@ -12,14 +12,14 @@ router.get("/admin/orders/all", async (req, res) => {
     const orders = await Order.find().populate("orderedBy", "uid");
     const users = await User.find();
     if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: "No orders found" });
+      return res.json({ message: "No orders found" });
     }
     //Top 4 cars
     const totalRevenue = orders.reduce((acc, order) => acc + order.price, 0);
-    const totalCustomers = users.length || 69; // testing purpose
-    const totalSales = orders.length || 8008; //testing purpose
+    const totalCustomers = users.length || 0; // testing purpose
+    const totalSales = orders.length || 0; //testing purpose
     const pendingOrders =
-      orders.filter((order) => order.status == "Pending").length || 65; //testing purpose
+      orders.filter((order) => order.status == "Pending").length || 0; //testing purpose
     //payment method chart
     const paymentOverview = orders.reduce((acc, order) => {
       acc[order.method] = (acc[order.method] || 0) + 1;

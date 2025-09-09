@@ -24,9 +24,9 @@ router.get('/user/orders', verifyToken, async (req, res) => {
       date: new Date(o.date).toISOString().slice(0, 10),
       total: Math.round((o.price || 0)),
       status: mapStatus(o.status),
-      items: [],
-      shippingAddress: '',
-      tracking: ''
+      items: (o.items||[]).map(i=>({ product: i.product, quantity: i.quantity, price: i.price })),
+      shippingAddress: o.shippingAddress || '',
+      tracking: o.tracking || ''
     }));
     return res.json(result);
   } catch (err) {
@@ -48,9 +48,9 @@ router.get('/user/orders/:id', verifyToken, async (req, res) => {
       date: new Date(order.date).toISOString().slice(0, 10),
       total: Math.round((order.price || 0)),
       status: mapStatus(order.status),
-      items: [],
-      shippingAddress: '',
-      tracking: ''
+      items: (order.items||[]).map(i=>({ product: i.product, quantity: i.quantity, price: i.price })),
+      shippingAddress: order.shippingAddress || '',
+      tracking: order.tracking || ''
     });
   } catch (err) {
     console.error(err);
@@ -64,7 +64,7 @@ module.exports = router;
 router.post('/user/orders/new', verifyToken, async (req, res) => {
   try {
     const userId = req.user.userID;
-    const { total, paymentMode } = req.body || {};
+    const { total, paymentMode, items, address, notes } = req.body || {};
     if (typeof total !== 'number') {
       return res.status(400).json({ error: 'total (number) required' });
     }
@@ -79,6 +79,9 @@ router.post('/user/orders/new', verifyToken, async (req, res) => {
       price: total,
       status: 'Pending',
       date: Date.now(),
+      items: Array.isArray(items) ? items.map(i=>({ product: String(i.product||''), quantity: Number(i.qty||i.quantity||1), price: Number(i.price||0) })) : [],
+      shippingAddress: address ? [address.line1, address.city, address.state, address.postalCode, address.country].filter(Boolean).join(', ') : '',
+      notes: notes || ''
     });
     await order.save();
 
@@ -106,9 +109,9 @@ router.post('/user/orders/new', verifyToken, async (req, res) => {
       date: new Date(order.date).toISOString().slice(0, 10),
       total: Math.round(order.price || 0),
       status: mapStatus(order.status),
-      items: [],
-      shippingAddress: '',
-      tracking: ''
+      items: (order.items||[]).map(i=>({ product: i.product, quantity: i.quantity, price: i.price })),
+      shippingAddress: order.shippingAddress || '',
+      tracking: order.tracking || ''
     });
   } catch (err) {
     console.error(err);
