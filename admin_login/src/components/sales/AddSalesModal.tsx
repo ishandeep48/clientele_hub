@@ -37,14 +37,14 @@ const AddSalesModal: React.FC<Props> = ({ sale, onClose, onSave }) => {
     console.log(form);
     console.log("sale is ",sale)
     if (!sale) {
-      const res = await axios.post('/admin/sales/new', form);
+      const res = await axios.post('https://clientele-hub.onrender.com/admin/sales/new', form);
       console.log("THIS IS ",res.data.message)
       if (res.data.message == 'done') {
         window.location.reload();
       }
     } else {
       console.log(form)
-      const res = await axios.post('/admin/sales/edit', form);
+      const res = await axios.post('https://clientele-hub.onrender.com/admin/sales/edit', form);
       console.log(res.data.message)
       if (res.data.message == 'done') {
         window.location.reload();

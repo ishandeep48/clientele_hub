@@ -34,7 +34,7 @@ const Leads = () => {
     const request = async () => {
       try {
         const response = await axios.get(
-          "/admin/leads/all"
+          "https://clientele-hub.onrender.com/admin/leads/all"
         );
         setLeads(response.data);
       } catch (e) {
@@ -51,7 +51,7 @@ const Leads = () => {
   const handleSaveLead = async () => {
     if (editId) {
       try {
-        const res = await axios.post("/admin/leads/new", {
+        const res = await axios.post("https://clientele-hub.onrender.com/admin/leads/new", {
           newLead,
         });
         console.log(res);
@@ -70,7 +70,7 @@ const Leads = () => {
       }
     } else {
       try {
-        const res = await axios.post("/admin/leads/new", {
+        const res = await axios.post("https://clientele-hub.onrender.com/admin/leads/new", {
           newLead,
         });
         const { message } = res.data;
@@ -94,7 +94,7 @@ const Leads = () => {
     if (confirm) {
       // console.log(uid);
       try{
-        const res =  await axios.post(' /admin/leads/delete',{uid});
+        const res =  await axios.post('https://clientele-hub.onrender.com/admin/leads/delete',{uid});
         if(res.data.message=="done"){
           setLeads((prev) => prev.filter((lead) => lead.uid !== uid));
       setSelectedLeads((prev) => {
@@ -138,12 +138,12 @@ const Leads = () => {
       return alert("Select at least one lead to convert.");
 
     try {
-      const res = await axios.post("/admin/leads/bulk-convert", {
+      const res = await axios.post("https://clientele-hub.onrender.com/admin/leads/bulk-convert", {
         uids: selectedUids,
       });
       if (res.data.success) {
         alert(`${selectedUids.length} lead(s) converted to customers.`);
-        const response = await axios.get("/admin/leads/all");
+        const response = await axios.get("https://clientele-hub.onrender.com/admin/leads/all");
         setLeads(response.data);
         setSelectedLeads(new Set());
       } else {

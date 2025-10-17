@@ -30,7 +30,7 @@ const Products = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('/admin/products/all');
+      const response = await axios.get('https://clientele-hub.onrender.com/admin/products/all');
       // Sort products alphabetically by name
       const sortedProducts = response.data.sort((a: Product, b: Product) => 
         a.name.localeCompare(b.name)
@@ -46,7 +46,7 @@ const Products = () => {
 
   const handleSave = async (product: Product) => {
     try {
-      await axios.post('/admin/products/new', { product });
+      await axios.post('https://clientele-hub.onrender.com/admin/products/new', { product });
       fetchProducts(); // Refresh the list
       setIsModalOpen(false);
       setEditProduct(null);
@@ -63,7 +63,7 @@ const Products = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Delete this product?')) {
       try {
-        await axios.delete(`/admin/products/delete/${id}`);
+        await axios.delete(`https://clientele-hub.onrender.com/admin/products/delete/${id}`);
         fetchProducts(); // Refresh the list
       } catch (error) {
         console.error('Error deleting product:', error);
@@ -73,7 +73,7 @@ const Products = () => {
 
   const seedProducts = async () => {
     try {
-      await axios.post('/admin/products/seed');
+      await axios.post('https://clientele-hub.onrender.com/admin/products/seed');
       fetchProducts(); // Refresh the list
     } catch (error) {
       console.error('Error seeding products:', error);

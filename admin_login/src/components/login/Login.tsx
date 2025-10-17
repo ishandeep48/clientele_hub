@@ -20,7 +20,7 @@ const Login: React.FC = () => {
     const mail : String = credentials.email;
     const password: String = credentials.password.trim();
 
-    axios.post("/admin/login",{mail,password})
+    axios.post("https://clientele-hub.onrender.com/admin/login",{mail,password})
     .then(res=> {
       if(res.data.isLoggedIn){
       localStorage.setItem("token",res.data.token);

@@ -14,7 +14,7 @@ const Payments = () => {
     // setPayments(stored);
     // console.log(stored);
     const getdata = async()=>{
-      const res = await axios.get('/admin/payments/all');
+      const res = await axios.get('https://clientele-hub.onrender.com/admin/payments/all');
       const stored = res.data;
       console.log(stored)
       setPayments(stored);

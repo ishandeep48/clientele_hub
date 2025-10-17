@@ -72,7 +72,7 @@ const AdminSettings: React.FC = () => {
       //   formData.append('profile_pic', blob, 'profile.jpg');
       // }
       const response = await axios.post(
-        "/admin/updatedetails",
+        "https://clientele-hub.onrender.com/admin/updatedetails",
         formData
       );
 
@@ -116,7 +116,7 @@ const AdminSettings: React.FC = () => {
       //   })
       // });
       const response = await axios.post(
-        "/admin/updatepass",
+        "https://clientele-hub.onrender.com/admin/updatepass",
         formData
       );
       const result = response.data;
@@ -150,7 +150,7 @@ const AdminSettings: React.FC = () => {
   const handleDeleteAccount = async () => {
     // localStorage.removeItem('admin_user');
     const response = await axios.delete(
-      "/admin/deleteacc",
+      "https://clientele-hub.onrender.com/admin/deleteacc",
       {
         data: {
           email: token.mail,

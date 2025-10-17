@@ -25,7 +25,7 @@ const Bills: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get("/admin/bills/all");
+        const res = await axios.get("https://clientele-hub.onrender.com/admin/bills/all");
         const data = Array.isArray(res.data) ? res.data : [];
         setBills(data);
       } catch (e) {

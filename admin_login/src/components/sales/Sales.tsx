@@ -15,7 +15,7 @@ const Sales: React.FC = () => {
     // //
     // setSales(storedSales);
     const getData = async()=>{
-      const res=await axios.get('/admin/sales/all');
+      const res=await axios.get('https://clientele-hub.onrender.com/admin/sales/all');
       const stored = res.data;
       setSales(stored);
     }
@@ -37,7 +37,7 @@ const Sales: React.FC = () => {
 
   const handleDeleteSale = async(id: string) => {
     console.log(id)
-    const res = await axios.delete('/admin/sales/delete',{data:{id}});
+    const res = await axios.delete('https://clientele-hub.onrender.com/admin/sales/delete',{data:{id}});
     console.log(res);
     if(res.data.message=="done")
     {const updatedSales = sales.filter((s) => s.salesid !== id);

@@ -23,7 +23,7 @@ const AdminNotifications = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await axios.get( '/admin/notifications');
+      const response = await axios.get( 'https://clientele-hub.onrender.com/admin/notifications');
       setNotifications(response.data);
     } catch (err) {
       console.error('Error fetching notifications:', err);
@@ -35,7 +35,7 @@ const AdminNotifications = () => {
 
   const dismissNotification = async (notificationId: string) => {
     try {
-      await axios.post( '/admin/notifications/dismiss', {
+      await axios.post( 'https://clientele-hub.onrender.com/admin/notifications/dismiss', {
         notificationId
       });
       setDismissedIds(prev => new Set([...prev, notificationId]));
@@ -46,7 +46,7 @@ const AdminNotifications = () => {
 
   const clearAllNotifications = async () => {
     try {
-      await axios.post( '/admin/notifications/clear');
+      await axios.post( 'https://clientele-hub.onrender.com/admin/notifications/clear');
       setDismissedIds(new Set(notifications.map(n => n.id)));
     } catch (err) {
       console.error('Error clearing notifications:', err);

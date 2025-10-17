@@ -22,7 +22,7 @@ const Login: React.FC = () => {
     const name: String = credentials.name.trim();
 
 
-    axios.post("/admin/signup",{mail,password,name})
+    axios.post("https://clientele-hub.onrender.com/admin/signup",{mail,password,name})
     .then(res=> {
       if(res.data.status){
       alert('Created Admin')
