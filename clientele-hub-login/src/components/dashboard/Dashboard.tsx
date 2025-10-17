@@ -11,6 +11,7 @@ interface Order {
 }
 
 const Dashboard = () => {
+  const [outstandingBalance, setOutstandingBalance] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [ordersLastMonth, setOrdersLastMonth] = useState(0);
   const [pendingPayments, setPendingPayments] = useState('₹0.00');
@@ -37,16 +38,32 @@ const Dashboard = () => {
       console.error('Error loading dashboard data:', error);
     }
   };
-
+  const loadInvoices = async () => {
+    const token = localStorage.getItem('userToken');
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:5000/user/billing', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!res.ok) return;
+      const totalDue = (data as any[])
+        .filter(inv => inv.status === 'Due')
+        .reduce((sum, inv) => sum + inv.amount, 0);
+      setOutstandingBalance(totalDue);
+    } catch (e) {}
+  };
   useEffect(() => {
     loadDashboardData();
     const handleStorageChange = () => { loadDashboardData(); };
     window.addEventListener('storage', handleStorageChange);
     const intervalId = setInterval(loadDashboardData, 10000);
+    loadInvoices();
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(intervalId);
     };
+    
   }, []);
 
   return (
@@ -64,8 +81,8 @@ const Dashboard = () => {
           <div className="card-header">
             <span className="card-title">Pending Payments</span>
           </div>
-          <div className="card-value">{pendingPayments}</div>
-          <div className="card-change">1 payment upcoming</div>
+          <div className="card-value">₹{outstandingBalance.toFixed(2)}</div>
+          {/* <div className="card-change">1 payment upcoming</div> */}
         </div>
 
         <div className="stats-card">
@@ -73,7 +90,7 @@ const Dashboard = () => {
             <span className="card-title">Active Support Tickets</span>
           </div>
           <div className="card-value">{activeTickets}</div>
-          <div className="card-change">1 waiting for response</div>
+          {/* <div className="card-change">1 waiting for response</div> */}
         </div>
       </div>
 

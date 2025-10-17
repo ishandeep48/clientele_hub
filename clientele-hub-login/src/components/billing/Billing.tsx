@@ -78,7 +78,7 @@ const Billing = () => {
         <div className="billing-card">
           <h2 className="billing-heading">Outstanding Balance</h2>
           <p className="billing-description">Your current account balance.</p>
-          <p className="billing-price">${outstandingBalance.toFixed(2)}</p>
+          <p className="billing-price">₹{outstandingBalance.toFixed(2)}</p>
           {outstandingBalance > 0 && (
             <button className="btn-primary mt" onClick={handlePayAll} disabled={isPayingAll}>
               {isPayingAll ? 'Processing...' : 'Pay Now'}
@@ -96,7 +96,7 @@ const Billing = () => {
               <th>Date</th>
               <th>Amount</th>
               <th>Status</th>
-              {/* <th>Actions</th> */}
+              <th>Actions</th> 
             </tr>
           </thead>
           <tbody>
@@ -104,19 +104,17 @@ const Billing = () => {
               <tr key={inv.id}>
                 <td>{inv.id}</td>
                 <td>{inv.date}</td>
-                <td>${inv.amount.toFixed(2)}</td>
+                <td>₹{inv.amount.toFixed(2)}</td>
                 <td>
                   <span className={`badge ${inv.status === 'Paid' ? 'badge-paid' : 'badge-due'}`}>
                     {inv.status}
                   </span>
                 </td>
-                {/* <td>
+                 <td>
                   {inv.status === 'Due' ? (
                     <button className="btn-sm btn-primary" onClick={() => handlePay(inv.id)}>Pay Now</button>
-                  ) : (
-                    <button className="btn-sm btn-secondary">Download</button>
-                  )}
-                </td> */}
+                  ) : <p>DONE</p>}
+                </td> 
               </tr>
             ))}
           </tbody>

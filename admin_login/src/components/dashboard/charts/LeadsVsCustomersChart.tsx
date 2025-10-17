@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
-const COLORS = ['#0ea5e9', '#10b981'];
+const COLORS = ['#f7801fff', '#0ea5e9'];
 
 const LeadsVsCustomersChart = ({lvcGraph}) => {
   const [data, setData] = useState([]);

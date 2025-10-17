@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { verifyToken } = require('../functions/verifyToken');
 const Order = require('../models/Order');
+const Ticket = require('../models/Ticket');
 
 // GET /user/dashboard - returns dashboard data for logged-in user
 router.get('/user/dashboard', verifyToken, async (req, res) => {
@@ -24,7 +25,8 @@ router.get('/user/dashboard', verifyToken, async (req, res) => {
     const pendingPayments = `₹${pendingAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     // No tickets model; approximate as count of pending orders to avoid new collections
-    const activeTickets = orders.filter(o => o.status === 'Pending').length;
+    const tickets = await Ticket.find()
+    const activeTickets = tickets.filter(o => o.status === 'Pending' || o.status === 'In Progress').length;
 
     const recentOrders = orders.slice(0, 3).map(o => ({
       id: o._id.toString(),

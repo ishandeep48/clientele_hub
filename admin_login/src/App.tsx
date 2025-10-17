@@ -15,6 +15,8 @@ import Feedback from './components/feedback/Feedback.tsx';
 import AdminNotifications from './components/notification/AdminNotifications.tsx';
 import AdminSettings from './components/setting/AdminSettings.tsx';
 import ProtectedRoute from './components/protectedroutes/protectedRoute.tsx';
+import Signup from './components/login/Signup.tsx';
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
       <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path = "/signup" element = {<Signup />}/>
           <Route path="/" element={<MainLayout />}>
           <Route path="dashboard" element={
             <ProtectedRoute>

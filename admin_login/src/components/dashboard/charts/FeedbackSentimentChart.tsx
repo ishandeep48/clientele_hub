@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
-const COLORS = ['#16a34a', '#facc15', '#ef4444'];
+const COLORS = ['#16a34a', '#fa9315ff', '#ef4444'];
 
 const FeedbackSentimentChart = ({feedbackGraph}) => {
   const [data, setData] = useState([]);

@@ -12,7 +12,7 @@ try{
     if(payments.length>0){
         return res.status(201).json(payments);
     }else{
-        return res.status(404).json({message:"No payments found"});
+        return res.json(payments);
     }
 } catch(e){
     console.log(e);

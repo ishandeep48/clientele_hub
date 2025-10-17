@@ -92,8 +92,8 @@ const OrderDetailsModal = ({ order, onClose }: OrderDetailsModalProps) => {
           </div>
 
           <div className="action-buttons">
-            {/* <button className="download-btn">Download Invoice</button>
-            <button className="cancel-btn">Request Cancellation</button> */}
+            <button className="download-btn">Download Invoice</button>
+            <button className="cancel-btn">Request Cancellation</button>
           </div>
         </div>
       </div>

@@ -105,7 +105,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ onClose, onCreated 
         <h3>Client Information</h3>
         <div className="modal-field">
           <input name="clientName" placeholder="Client Name" value={clientInfo.clientName} onChange={handleClientChange} />
-          <input name="email" placeholder="Email" value={clientInfo.email} onChange={handleClientChange} />
+          <input type='email' name="email" placeholder="Email" value={clientInfo.email} onChange={handleClientChange} />
           <input name="clientId" placeholder="Client ID" value={clientInfo.clientId} onChange={handleClientChange} />
         </div>
 
@@ -114,7 +114,18 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ onClose, onCreated 
           <input name="line1" placeholder="Address Line 1" value={address.line1} onChange={handleAddressChange} />
           <input name="city" placeholder="City" value={address.city} onChange={handleAddressChange} />
           <input name="state" placeholder="State / Province" value={address.state} onChange={handleAddressChange} />
-          <input name="postalCode" placeholder="Postal Code" value={address.postalCode} onChange={handleAddressChange} />
+<input
+  type="number"
+  name="postalCode"
+  placeholder="Postal Code"
+  value={address.postalCode}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (value.length <= 6) {
+      handleAddressChange(e);
+    }
+  }}
+/>
           <input name="country" placeholder="Country" value={address.country} onChange={handleAddressChange} />
         </div>
 
@@ -126,12 +137,15 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ onClose, onCreated 
               value={item.product}
               onChange={(e) => handleItemChange(index, 'product', e.target.value)}
             />
+<span align='left'>Quantity</span>
             <input
               type="number"
               placeholder="Qty"
               value={item.qty}
               onChange={(e) => handleItemChange(index, 'qty', e.target.value)}
             />
+<span className="text-left block">Price</span>
+            {/* <h3>Price</h3> */}
             <input
               type="number"
               placeholder="Price"

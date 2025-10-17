@@ -76,13 +76,13 @@ const OrderDetailsModal = ({ order, isOpen, onClose }: Props) => {
           <>
             <div className="order-details-grid">
               <div className="detail-section">
-                <h4>👤 Customer Information</h4>
+                <h4>Customer Information</h4>
                 <p><strong>Name:</strong> <span>{orderDetails.customer?.name || orderDetails.customerName || 'N/A'}</span></p>
                 <p><strong>Email:</strong> <span>{orderDetails.customer?.email || orderDetails.customerEmail || 'N/A'}</span></p>
                 <p><strong>Phone:</strong> <span>{orderDetails.customer?.phone || orderDetails.customerPhone || 'N/A'}</span></p>
               </div>
               <div className="detail-section">
-                <h4>📦 Order Summary</h4>
+                <h4>Order Summary</h4>
                 <p><strong>Products:</strong> <span>{orderDetails.product || orderDetails.productName || 'N/A'}</span></p>
                 <p><strong>Items:</strong> <span>{orderDetails.items || orderDetails.itemCount || orderDetails.itemsList?.length || 0}</span></p>
                 <p><strong>Total:</strong> <span>₹{orderDetails.total?.toLocaleString() || 'N/A'}</span></p>
@@ -91,7 +91,7 @@ const OrderDetailsModal = ({ order, isOpen, onClose }: Props) => {
                 <p><strong>Payment:</strong> <span>{orderDetails.paymentMethod || 'N/A'}</span></p>
               </div>
               <div className="detail-section">
-                <h4>🧾 Products</h4>
+                <h4>Products</h4>
                 {orderDetails.itemsList && orderDetails.itemsList.length > 0 ? (
                   <table className="items-table">
                     <thead>
@@ -116,12 +116,12 @@ const OrderDetailsModal = ({ order, isOpen, onClose }: Props) => {
                 )}
               </div>
               <div className="detail-section">
-                <h4>📍 Shipping Address</h4>
+                <h4>Shipping Address</h4>
                 <p>{orderDetails.shippingAddress || 'No shipping address provided.'}</p>
               </div>
               {orderDetails.adminResponse && (
                 <div className="detail-section">
-                  <h4>💬 Admin Response</h4>
+                  <h4>Admin Response</h4>
                   <p>{orderDetails.adminResponse}</p>
                 </div>
               )}

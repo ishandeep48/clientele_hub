@@ -10,7 +10,7 @@ const { SECRET_KEY } = require("../functions/verifyToken");
 //     res.send('Hi');
 // })
 //SIGNIN ROUTE FOR ADMIN(WILL BE REMOVED)
-router.post("/admin/signin", async (req, res) => {
+router.post("/admin/signup", async (req, res) => {
   if (!req.body) {
     console.log("empty btich");
     return;
@@ -31,7 +31,7 @@ router.post("/admin/signin", async (req, res) => {
   });
 
   await newAdmin.save();
-  res.json({ msg: "Registered" });
+  res.json({ status:true ,msg: "Registered" });
   res.send("OK BITCH");
 });
 //LOGIN ROUTE

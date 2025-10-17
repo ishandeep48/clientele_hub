@@ -12,7 +12,18 @@ router.get("/admin/orders/all", async (req, res) => {
     const orders = await Order.find().populate("orderedBy", "uid");
     const users = await User.find();
     if (!orders || orders.length === 0) {
-      return res.json({ message: "No orders found" });
+      return res.json({
+        message: "No orders found",
+        totalRevenue: 0,
+        totalCustomers: 0,
+        totalSales: 0,
+        pendingOrders: 0,
+        salesOverviewArray: [],
+        orderOverview: [],
+        paymentOverview: [] ,
+        feedbackSentiment: [],
+        leadVScustArray: [],
+      });
     }
     //Top 4 cars
     const totalRevenue = orders.reduce((acc, order) => acc + order.price, 0);
@@ -33,13 +44,13 @@ router.get("/admin/orders/all", async (req, res) => {
     );
 
     //feedback sentiment chart - use actual customer feedback
-    const feedbackData = await Feedback.find().populate('user', 'name email');
-    const feedbackSentiment = feedbackData.map(f => ({
+    const feedbackData = await Feedback.find().populate("user", "name email");
+    const feedbackSentiment = feedbackData.map((f) => ({
       message: f.message,
       rating: f.rating || 3,
-      tag: f.tag || 'Suggestion',
-      customer: f.user?.name || f.user?.email || 'Unknown',
-      date: new Date(f.createdAt).toLocaleDateString()
+      tag: f.tag || "Suggestion",
+      customer: f.user?.name || f.user?.email || "Unknown",
+      date: new Date(f.createdAt).toLocaleDateString(),
     }));
     //sales chart
     const salesOverview = orders.reduce((acc, order) => {
@@ -168,9 +179,9 @@ router.post("/admin/leads/bulk-convert", async (req, res) => {
       { uid: { $in: uids } },
       { $set: { userType: "customer" } }
     );
-    return res.status(201).json({message:"converted",success:true});
+    return res.status(201).json({ message: "converted", success: true });
   } catch (err) {
-    return res.status(500).json({message:"error",success:false});
+    return res.status(500).json({ message: "error", success: false });
   }
 });
 

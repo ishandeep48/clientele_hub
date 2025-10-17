@@ -18,7 +18,7 @@ const ticketSchema = new mongoose.Schema({
   subject: { type: String, required: true },
   description: { type: String, required: true },
   attachment: { type: String },
-  status: { type: String, enum: ['Pending','Completed','In Progress','Cancelled'], default: 'Open' },
+  status: { type: String, enum: ['Pending','Completed','In Progress','Cancelled'], default: 'Pending' },
   responses: { type: [responseSchema], default: [] },
   feedback: { type: feedbackSchema },
   createdAt: { type: Date, default: Date.now, required: true },
