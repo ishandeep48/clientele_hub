@@ -19,7 +19,7 @@ const Feedback = () => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:5000/user/feedback', {
+      const res = await fetch('https://clientele-hub.onrender.com/user/feedback', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -37,7 +37,7 @@ const Feedback = () => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:5000/user/feedback', {
+      const res = await fetch('https://clientele-hub.onrender.com/user/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ message, rating, tag })

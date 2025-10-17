@@ -17,7 +17,7 @@ const Billing = () => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:5000/user/billing', {
+      const res = await fetch('https://clientele-hub.onrender.com/user/billing', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -38,7 +38,7 @@ const Billing = () => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
     try {
-      const res = await fetch(`http://localhost:5000/user/billing/${id}/pay`, {
+      const res = await fetch(`https://clientele-hub.onrender.com/user/billing/${id}/pay`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -56,7 +56,7 @@ const Billing = () => {
     setIsPayingAll(true);
     try {
       for (const inv of due) {
-        const res = await fetch(`http://localhost:5000/user/billing/${inv.id}/pay`, {
+        const res = await fetch(`https://clientele-hub.onrender.com/user/billing/${inv.id}/pay`, {
           method: 'PUT',
           headers: { Authorization: `Bearer ${token}` }
         });

@@ -17,7 +17,7 @@ const Account = () => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:5000/user/profile', {
+      const res = await fetch('https://clientele-hub.onrender.com/user/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -58,7 +58,7 @@ const Account = () => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:5000/user/profile', {
+      const res = await fetch('https://clientele-hub.onrender.com/user/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ name, company, phone,email })
@@ -82,7 +82,7 @@ const Account = () => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:5000/user/password', {
+      const res = await fetch('https://clientele-hub.onrender.com/user/password', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ currentPassword, newPassword })

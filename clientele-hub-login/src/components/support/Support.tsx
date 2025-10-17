@@ -33,7 +33,7 @@ const Support = () => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
     try {
-      const res = await fetch('http://localhost:5000/user/support/tickets', {
+      const res = await fetch('https://clientele-hub.onrender.com/user/support/tickets', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -54,7 +54,7 @@ const Support = () => {
   const addTicket = async (input: { subject: string; description: string; attachment: string | null; }) => {
     const token = localStorage.getItem('userToken');
     if (!token) return;
-    const res = await fetch('http://localhost:5000/user/support/tickets', {
+    const res = await fetch('https://clientele-hub.onrender.com/user/support/tickets', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(input)
@@ -104,7 +104,7 @@ const Support = () => {
             if ((ticket.responses?.length || 0) > (selectedTicket.responses?.length || 0)){
               const newMsg = ticket.responses[ticket.responses.length - 1]?.message;
               if (newMsg){
-                const res = await fetch(`http://localhost:5000/user/support/tickets/${ticket.id}/respond`, {
+                const res = await fetch(`https://clientele-hub.onrender.com/user/support/tickets/${ticket.id}/respond`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                   body: JSON.stringify({ message: newMsg })
@@ -117,7 +117,7 @@ const Support = () => {
               }
             }
             if (ticket.feedback && (ticket.feedback.rating !== (selectedTicket.feedback?.rating||0) || ticket.feedback.comment !== (selectedTicket.feedback?.comment||''))){
-              const res = await fetch(`http://localhost:5000/user/support/tickets/${ticket.id}/feedback`, {
+              const res = await fetch(`https://clientele-hub.onrender.com/user/support/tickets/${ticket.id}/feedback`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ rating: ticket.feedback.rating, comment: ticket.feedback.comment, close: ticket.status === 'Closed' })

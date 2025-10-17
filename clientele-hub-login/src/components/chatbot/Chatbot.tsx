@@ -50,7 +50,7 @@ const Chatbot = () => {
     // ORDER-RELATED QUERIES
     if (q.includes('order') && q.includes('status')) {
       try{
-        const res = await axios.get('http://localhost:5000/user/orders', {
+        const res = await axios.get('https://clientele-hub.onrender.com/user/orders', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const orders = Array.isArray(res.data) ? res.data : [];
@@ -63,7 +63,7 @@ const Chatbot = () => {
 
     if (q.includes('total') && q.includes('order')) {
       try{
-        const res = await axios.get('http://localhost:5000/user/orders', {
+        const res = await axios.get('https://clientele-hub.onrender.com/user/orders', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const orders = Array.isArray(res.data) ? res.data : [];
@@ -75,7 +75,7 @@ const Chatbot = () => {
 
     if (q.includes('last') && q.includes('order')) {
       try{
-        const res = await axios.get('http://localhost:5000/user/orders', {
+        const res = await axios.get('https://clientele-hub.onrender.com/user/orders', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const orders = Array.isArray(res.data) ? res.data : [];
@@ -89,7 +89,7 @@ const Chatbot = () => {
     // TICKET-RELATED QUERIES
     if (q.includes('ticket') || q.includes('support') || q.includes('complaint')) {
       try{
-        const res = await axios.get('http://localhost:5000/user/support/tickets', {
+        const res = await axios.get('https://clientele-hub.onrender.com/user/support/tickets', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const tickets = Array.isArray(res.data) ? res.data : [];
@@ -102,7 +102,7 @@ const Chatbot = () => {
 
     if (q.includes('open ticket')) {
       try{
-        const res = await axios.get('http://localhost:5000/user/support/tickets', {
+        const res = await axios.get('https://clientele-hub.onrender.com/user/support/tickets', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const tickets = Array.isArray(res.data) ? res.data : [];

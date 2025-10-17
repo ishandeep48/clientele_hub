@@ -70,7 +70,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ onClose, onCreated 
     try {
       const token = localStorage.getItem('userToken');
       const total = getOrderTotal();
-      const res = await fetch('http://localhost:5000/user/orders/new', {
+      const res = await fetch('https://clientele-hub.onrender.com/user/orders/new', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

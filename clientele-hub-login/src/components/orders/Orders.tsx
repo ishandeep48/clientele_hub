@@ -41,7 +41,7 @@ const Orders = () => {
         setIsLoading(false);
         return;
       }
-      const res = await fetch('http://localhost:5000/user/orders', {
+      const res = await fetch('https://clientele-hub.onrender.com/user/orders', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
