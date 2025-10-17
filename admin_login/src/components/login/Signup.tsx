@@ -22,7 +22,7 @@ const Login: React.FC = () => {
     const name: String = credentials.name.trim();
 
 
-    axios.post("http://localhost:5000/admin/signup",{mail,password,name})
+    axios.post("/admin/signup",{mail,password,name})
     .then(res=> {
       if(res.data.status){
       alert('Created Admin')

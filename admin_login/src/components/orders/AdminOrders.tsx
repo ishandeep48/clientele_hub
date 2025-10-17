@@ -34,7 +34,7 @@ const AdminOrders = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://localhost:5000/admin/orders/getall');
+      const response = await axios.get('/admin/orders/getall');
       // Ensure orders is always an array
       console.log(response.data);
       const ordersData = Array.isArray(response.data) ? response.data : [];
@@ -60,7 +60,7 @@ const AdminOrders = () => {
 
 const handleAcknowledgeConfirm = async (orderId: string, response: string) => {
   try {
-    await axios.put(`http://localhost:5000/admin/orders/${orderId}/acknowledge`, {
+    await axios.put(`/admin/orders/${orderId}/acknowledge`, {
       adminResponse: response
     });
     fetchOrders(); // Refresh the list
@@ -71,7 +71,7 @@ const handleAcknowledgeConfirm = async (orderId: string, response: string) => {
 
   const seedOrders = async () => {
     try {
-      await axios.post('http://localhost:5000/admin/orders/seed');
+      await axios.post('/admin/orders/seed');
       fetchOrders(); // Refresh the list
     } catch (error) {
       console.error('Error seeding orders:', error);

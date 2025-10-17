@@ -27,7 +27,7 @@ const Tasks = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get('http://localhost:5000/admin/tasks/all');
+        const res = await axios.get('/admin/tasks/all');
         const data = Array.isArray(res.data) ? res.data : [];
         console.log(data)
         setTasks(data);
@@ -71,9 +71,9 @@ const Tasks = () => {
       return;
     }
     try{
-      await axios.delete('http://localhost:5000/admin/tasks/delete', { data: { title: task.title, dueDate: task.dueDate } });
+      await axios.delete('/admin/tasks/delete', { data: { title: task.title, dueDate: task.dueDate } });
       // refresh
-      const res = await axios.get('http://localhost:5000/admin/tasks/all');
+      const res = await axios.get('/admin/tasks/all');
       setTasks(Array.isArray(res.data) ? res.data : []);
     }catch(e){
       console.error('Failed to delete task', e);
@@ -108,7 +108,7 @@ const Tasks = () => {
       
       if(editingOriginal?.isTicket && editingOriginal?.ticketId){
         console.log(1111)
-        await axios.put('http://localhost:5000/admin/tasks/update', {
+        await axios.put('/admin/tasks/update', {
           filter: { ticketId: editingOriginal.ticketId },
           update: {
             status: form.status,
@@ -118,7 +118,7 @@ const Tasks = () => {
         }, { headers: { 'Content-Type': 'application/json' } });
       } else {
         // Regular task update
-        await axios.put('http://localhost:5000/admin/tasks/update', {
+        await axios.put('/admin/tasks/update', {
           filter: { title: editingOriginal.title, dueDate: editingOriginal.dueDate },
           update: {
             title: form.title,
@@ -131,7 +131,7 @@ const Tasks = () => {
         }, { headers: { 'Content-Type': 'application/json' } });
       }
       
-      const res = await axios.get('http://localhost:5000/admin/tasks/all');
+      const res = await axios.get('/admin/tasks/all');
       setTasks(Array.isArray(res.data) ? res.data : []);
       setIsModalOpen(false);
       setEditingOriginal(null);

@@ -15,7 +15,7 @@ const Feedback = () => {
 
   const loadFeedback = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/admin/feedback/all');
+      const res = await axios.get('/admin/feedback/all');
       const data = await res.data;
       // if (!res.ok) return;
       setFeedbackList(data as Feedback[]);

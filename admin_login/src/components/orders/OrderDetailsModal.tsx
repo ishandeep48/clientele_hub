@@ -54,7 +54,7 @@ const OrderDetailsModal = ({ order, isOpen, onClose }: Props) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`http://localhost:5000/admin/orders/${order.orderId}`);
+      const response = await axios.get(`/admin/orders/${order.orderId}`);
       setOrderDetails(response.data);
     } catch (error) {
       console.error('Error fetching order details:', error);

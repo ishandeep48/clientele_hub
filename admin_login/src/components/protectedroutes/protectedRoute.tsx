@@ -12,16 +12,16 @@ export default function ProtectedRoute({ children }) {
 
     if (!decoded.exp || decoded.exp < currentTime) {
       localStorage.removeItem("token");
-      return <Navigate to="/login" />;
+      return <Navigate to="/admin/login" />;
     }
     // Check for admin role
     if (!decoded.role || decoded.role != "admin") {
       localStorage.removeItem("token");
-      return <Navigate to="/login" />;
+      return <Navigate to="/admin/login" />;
     }
   } catch (e) {
     localStorage.removeItem("token");
-    return <Navigate to="/login" />;
+    return <Navigate to="/admin/login" />;
   }
   return children;
 }

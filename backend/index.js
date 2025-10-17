@@ -1,8 +1,9 @@
 const express = require('express')
 const middleware = require('./contents/middlewares/middleware.js')
 const Routes = require('./contents/Routes/index.js')
-
+const path = require('path')
 const app =express()
+
 
 middleware(app);
 Routes(app);

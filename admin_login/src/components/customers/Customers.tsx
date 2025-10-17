@@ -28,7 +28,7 @@ const Customers = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://localhost:5000/admin/customers/all');
+      const response = await axios.get('/admin/customers/all');
       // Sort customers alphabetically by name
       const sortedCustomers = response.data.sort((a: Customer, b: Customer) => 
         a.name.localeCompare(b.name)
@@ -45,10 +45,10 @@ const Customers = () => {
   const handleAddCustomer = async (customer: Customer) => {
     try {
       if (editingCustomer) {
-        await axios.post('http://localhost:5000/admin/customers/new', { customer });
+        await axios.post('/admin/customers/new', { customer });
         setEditingCustomer(null);
       } else {
-        await axios.post('http://localhost:5000/admin/customers/new', { customer });
+        await axios.post('/admin/customers/new', { customer });
       }
       fetchCustomers(); // Refresh the list
     } catch (error) {
@@ -58,7 +58,7 @@ const Customers = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:5000/admin/customers/delete/${id}`);
+      await axios.delete(`/admin/customers/delete/${id}`);
       fetchCustomers(); // Refresh the list
       setMenuOpen(null);
     } catch (error) {

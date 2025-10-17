@@ -21,13 +21,13 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios.get("http://localhost:5000/admin/orders/all");
+      const result = await axios.get("/admin/orders/all");
       if (result.data.message == "No orders found") {
         console.log("NO ORDER HAI JI");
       }
       // Sales Module
       setTotalSales(result.data.totalSales);
-
+      // console.log(result.data);
       setTotalRevenue(result.data.totalRevenue);
 
       // Customers Module
